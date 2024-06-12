@@ -1,0 +1,4 @@
+@PACKAGE_INIT@
+set_and_check(@PROJECT_NAME@_TARGETS_FILE
+              "@PACKAGE_CMAKE_INSTALL_PACKAGEDIR@/@PROJECT_NAME@-targets.cmake")
+include("${@PROJECT_NAME@_TARGETS_FILE}")

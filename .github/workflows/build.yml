@@ -1,0 +1,46 @@
+name: Build
+on:
+  workflow_call:
+  workflow_dispatch:
+jobs:
+  build:
+    strategy:
+      matrix:
+        variant:
+          - name: Linux Debug
+            os: ubuntu-latest
+            preset: gcc-sanitized
+          - name: Windows Debug
+            os: windows-latest
+            preset: msvc-sanitized
+          - name: MacOS Debug
+            os: macos-latest
+            preset: clang-sanitized
+    name: ${{ matrix.variant.name }}
+    runs-on: ${{ matrix.variant.os }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install required tools (apt)
+        if: runner.os == 'Linux'
+        run: scripts/install_tools_apt.sh
+
+      - name: Install required tools (brew)
+        if: runner.os == 'MacOS'
+        run: scripts/install_tools_brew.sh
+      
+      - name: Setup Visual Studio environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Configure
+        run: cmake --preset ${{ matrix.variant.preset }}
+
+      - name: Build
+        run: cmake --build --preset ${{ matrix.variant.preset }}
+
+      - name: Test
+        run: ctest --preset ${{ matrix.variant.preset }}

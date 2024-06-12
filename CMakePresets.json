@@ -1,0 +1,511 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "build/${presetName}",
+            "toolchainFile": "vcpkg/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "mymath_ENABLE_TEST": "ON",
+                "CMAKE_C_FLAGS": "$env{MY_C_FLAGS} $env{MY_C_FLAGS_COVERAGE} $env{MY_C_FLAGS_SANITIZER}",
+                "CMAKE_CXX_FLAGS": "$env{MY_CXX_FLAGS} $env{MY_CXX_FLAGS_COVERAGE} $env{MY_CXX_FLAGS_SANITIZER}",
+                "CMAKE_INSTALL_PREFIX": "build/${presetName}/installed"
+            }
+        },
+        {
+            "name": "gcc",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++"
+            },
+            "environment": {
+                "MY_C_FLAGS": "-Wall -Wextra -Werror",
+                "MY_CXX_FLAGS": "-Wall -Wextra -Werror"
+            }
+        },
+        {
+            "name": "msvc",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "cl",
+                "CMAKE_CXX_COMPILER": "cl"
+            },
+            "environment": {
+                "MY_C_FLAGS": "/W4 /WX /EHsc",
+                "MY_CXX_FLAGS": "/W4 /WX /EHsc"
+            },
+            "architecture": {
+                "strategy": "external",
+                "value": "x64"
+            },
+            "toolset": {
+                "strategy": "external",
+                "value": "host=x64"
+            }
+        },
+        {
+            "name": "clang",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++"
+            },
+            "environment": {
+                "MY_C_FLAGS": "-Wall -Wextra -Werror",
+                "MY_CXX_FLAGS": "-Wall -Wextra -Werror"
+            }
+        },
+        {
+            "name": "gcov",
+            "hidden": true,
+            "environment": {
+                "MY_C_FLAGS_COVERAGE": "--coverage",
+                "MY_CXX_FLAGS_COVERAGE": "--coverage"
+            }
+        },
+        {
+            "name": "gcc-sanitizer-flags",
+            "hidden": true,
+            "environment": {
+                "MY_C_FLAGS_SANITIZER": "-fsanitize=address -fsanitize=undefined",
+                "MY_CXX_FLAGS_SANITIZER": "-fsanitize=address -fsanitize=undefined"
+            }
+        },
+        {
+            "name": "clang-sanitizer-flags",
+            "hidden": true,
+            "inherits": [
+                "gcc-sanitizer-flags"
+            ]
+        },
+        {
+            "name": "msvc-sanitizer-flags",
+            "hidden": true,
+            "environment": {
+                "MY_C_FLAGS_SANITIZER": "/fsanitize=address",
+                "MY_CXX_FLAGS_SANITIZER": "/fsanitize=address"
+            }
+        },
+        {
+            "name": "debug",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "release",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "relwithdebinfo",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo"
+            }
+        },
+        {
+            "name": "minsizerel",
+            "hidden": true,
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "MinSizeRel"
+            }
+        },
+        {
+            "name": "gcc-debug",
+            "displayName": "GCC Debug",
+            "inherits": [
+                "base",
+                "gcc",
+                "debug"
+            ]
+        },
+        {
+            "name": "gcc-release",
+            "displayName": "GCC Release",
+            "inherits": [
+                "base",
+                "gcc",
+                "release"
+            ]
+        },
+        {
+            "name": "gcc-relwithdebinfo",
+            "displayName": "GCC RelWithDebInfo",
+            "inherits": [
+                "base",
+                "gcc",
+                "relwithdebinfo"
+            ]
+        },
+        {
+            "name": "gcc-minsizerel",
+            "displayName": "GCC MinSizeRel",
+            "inherits": [
+                "base",
+                "gcc",
+                "minsizerel"
+            ]
+        },
+        {
+            "name": "gcc-coverage",
+            "displayName": "GCC Coverage",
+            "inherits": [
+                "base",
+                "gcc",
+                "debug",
+                "gcov"
+            ]
+        },
+        {
+            "name": "gcc-sanitized",
+            "displayName": "GCC Sanitized (ASan, UBSan)",
+            "inherits": [
+                "base",
+                "gcc",
+                "debug",
+                "gcc-sanitizer-flags"
+            ]
+        },
+        {
+            "name": "clang-debug",
+            "displayName": "Clang Debug",
+            "inherits": [
+                "base",
+                "clang",
+                "debug"
+            ]
+        },
+        {
+            "name": "clang-release",
+            "displayName": "Clang Release",
+            "inherits": [
+                "base",
+                "clang",
+                "release"
+            ]
+        },
+        {
+            "name": "clang-relwithdebinfo",
+            "displayName": "Clang RelWithDebInfo",
+            "inherits": [
+                "base",
+                "clang",
+                "relwithdebinfo"
+            ]
+        },
+        {
+            "name": "clang-minsizerel",
+            "displayName": "Clang MinSizeRel",
+            "inherits": [
+                "base",
+                "clang",
+                "minsizerel"
+            ]
+        },
+        {
+            "name": "clang-coverage",
+            "displayName": "Clang Coverage",
+            "inherits": [
+                "base",
+                "clang",
+                "debug",
+                "gcov"
+            ]
+        },
+        {
+            "name": "clang-sanitized",
+            "displayName": "Clang Sanitized (ASan, UBSan)",
+            "inherits": [
+                "base",
+                "clang",
+                "debug",
+                "clang-sanitizer-flags"
+            ]
+        },
+        {
+            "name": "msvc-debug",
+            "displayName": "MSVC Debug",
+            "inherits": [
+                "base",
+                "msvc",
+                "debug"
+            ]
+        },
+        {
+            "name": "msvc-release",
+            "displayName": "MSVC Release",
+            "inherits": [
+                "base",
+                "msvc",
+                "release"
+            ]
+        },
+        {
+            "name": "msvc-relwithdebinfo",
+            "displayName": "MSVC RelWithDebInfo",
+            "inherits": [
+                "base",
+                "msvc",
+                "relwithdebinfo"
+            ]
+        },
+        {
+            "name": "msvc-minsizerel",
+            "displayName": "MSVC MinSizeRel",
+            "inherits": [
+                "base",
+                "msvc",
+                "minsizerel"
+            ]
+        },
+        {
+            "name": "msvc-sanitized",
+            "displayName": "MSVC Sanitized (ASan)",
+            "inherits": [
+                "base",
+                "msvc",
+                "debug",
+                "msvc-sanitizer-flags"
+            ]
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "gcc-debug",
+            "displayName": "GCC Debug",
+            "configurePreset": "gcc-debug"
+        },
+        {
+            "name": "gcc-release",
+            "displayName": "GCC Release",
+            "configurePreset": "gcc-release"
+        },
+        {
+            "name": "gcc-relwithdebinfo",
+            "displayName": "GCC RelWithDebInfo",
+            "configurePreset": "gcc-relwithdebinfo"
+        },
+        {
+            "name": "gcc-minsizerel",
+            "displayName": "GCC MinSizeRel",
+            "configurePreset": "gcc-minsizerel"
+        },
+        {
+            "name": "gcc-coverage",
+            "displayName": "GCC Coverage",
+            "configurePreset": "gcc-coverage"
+        },
+        {
+            "name": "gcc-sanitized",
+            "displayName": "GCC Sanitized",
+            "configurePreset": "gcc-sanitized"
+        },
+        {
+            "name": "clang-debug",
+            "displayName": "Clang Debug",
+            "configurePreset": "clang-debug"
+        },
+        {
+            "name": "clang-release",
+            "displayName": "Clang Release",
+            "configurePreset": "clang-release"
+        },
+        {
+            "name": "clang-relwithdebinfo",
+            "displayName": "Clang RelWithDebInfo",
+            "configurePreset": "clang-relwithdebinfo"
+        },
+        {
+            "name": "clang-minsizerel",
+            "displayName": "Clang MinSizeRel",
+            "configurePreset": "clang-minsizerel"
+        },
+        {
+            "name": "clang-coverage",
+            "displayName": "Clang Coverage",
+            "configurePreset": "clang-coverage"
+        },
+        {
+            "name": "clang-sanitized",
+            "displayName": "Clang Sanitized",
+            "configurePreset": "clang-sanitized"
+        },
+        {
+            "name": "msvc-debug",
+            "displayName": "MSVC Debug",
+            "configurePreset": "msvc-debug"
+        },
+        {
+            "name": "msvc-release",
+            "displayName": "MSVC Release",
+            "configurePreset": "msvc-release"
+        },
+        {
+            "name": "msvc-relwithdebinfo",
+            "displayName": "MSVC RelWithDebInfo",
+            "configurePreset": "msvc-relwithdebinfo"
+        },
+        {
+            "name": "msvc-minsizerel",
+            "displayName": "MSVC MinSizeRel",
+            "configurePreset": "msvc-minsizerel"
+        },
+        {
+            "name": "msvc-sanitized",
+            "displayName": "MSVC Sanitized",
+            "configurePreset": "msvc-sanitized"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "base",
+            "hidden": true,
+            "output": {
+                "outputOnFailure": true
+            }
+        },
+        {
+            "name": "gcc-debug",
+            "displayName": "GCC Debug",
+            "configurePreset": "gcc-debug",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "gcc-release",
+            "displayName": "GCC Release",
+            "configurePreset": "gcc-release",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "gcc-relwithdebinfo",
+            "displayName": "GCC RelWithDebInfo",
+            "configurePreset": "gcc-relwithdebinfo",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "gcc-minsizerel",
+            "displayName": "GCC MinSizeRel",
+            "configurePreset": "gcc-minsizerel",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "gcc-coverage",
+            "displayName": "GCC Coverage",
+            "configurePreset": "gcc-coverage",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "gcc-sanitized",
+            "displayName": "GCC Sanitized",
+            "configurePreset": "gcc-sanitized",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "clang-debug",
+            "displayName": "Clang Debug",
+            "configurePreset": "clang-debug",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "clang-release",
+            "displayName": "Clang Release",
+            "configurePreset": "clang-release",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "clang-relwithdebinfo",
+            "displayName": "Clang RelWithDebInfo",
+            "configurePreset": "clang-relwithdebinfo",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "clang-minsizerel",
+            "displayName": "Clang MinSizeRel",
+            "configurePreset": "clang-minsizerel",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "clang-coverage",
+            "displayName": "Clang Coverage",
+            "configurePreset": "clang-coverage",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "clang-sanitized",
+            "displayName": "Clang Sanitized",
+            "configurePreset": "clang-sanitized",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "msvc-debug",
+            "displayName": "MSVC Debug",
+            "configurePreset": "msvc-debug",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "msvc-release",
+            "displayName": "MSVC Release",
+            "configurePreset": "msvc-release",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "msvc-relwithdebinfo",
+            "displayName": "MSVC RelWithDebInfo",
+            "configurePreset": "msvc-relwithdebinfo",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "msvc-minsizerel",
+            "displayName": "MSVC MinSizeRel",
+            "configurePreset": "msvc-minsizerel",
+            "inherits": [
+                "base"
+            ]
+        },
+        {
+            "name": "msvc-sanitized",
+            "displayName": "MSVC Sanitized",
+            "configurePreset": "msvc-sanitized",
+            "inherits": [
+                "base"
+            ]
+        }
+    ]
+}

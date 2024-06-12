@@ -1,0 +1,10 @@
+cmake_minimum_required(VERSION 3.22)
+project(mymath VERSION 0.1.0)
+option(${PROJECT_NAME}_ENABLE_TEST "Enable unit-tests" OFF)
+
+add_subdirectory(src)
+if(${PROJECT_NAME}_ENABLE_TEST)
+  enable_testing()
+  add_subdirectory(test)
+endif()
+add_subdirectory(pkg)
