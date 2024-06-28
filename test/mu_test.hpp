@@ -3,6 +3,9 @@
 #include <gtest/gtest.h>
 #include <mu/mu.hpp>
 
+#define ASSERT_LONG_DOUBLE_EQ(actual, expected)                                \
+  ASSERT_DOUBLE_EQ((double)(actual), (double)(expected))
+
 #define CONSTEXPR_TEST(suite, case) namespace test_##suite##_##case
 
 namespace test {
