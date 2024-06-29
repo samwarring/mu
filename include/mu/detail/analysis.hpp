@@ -52,22 +52,26 @@ template <units FromUnits, units ToUnits> struct analysis {
         // Found a combined *irrational* factor with a non-zero exponent. This
         // guarantees that FromUnits cannot be converted to ToUnits without
         // multiplying by some floating point conversion value.
-        float_conversion *= compute_pow(f.irrational_value, f.exponent);
+        float_conversion *=
+            compute_rational_pow(f.irrational_value, f.exponent);
       } else {
         // Found a *rational* factor. Break it into prime factors.
         prime_factorize(prime_factors, f.rational_value, f.exponent);
       }
     }
 
-    // Combine prime factors
-    simplify_prime_factors(prime_factors);
+    // Combine prime factors, and calculate their contribution to the unit
+    // conversion value.
+    combine_prime_factors(prime_factors);
     for (const auto &f : prime_factors) {
-      if (f.exponent.den == 1) {
+      if (!f.exponent.is_negative() && f.exponent.is_whole()) {
         // This factor only requires int conversion.
-        int_conversion *= compute_pow(f.base, f.exponent.num);
+        int_conversion *=
+            compute_whole_pow(f.base, f.exponent.num / f.exponent.den);
       } else {
         // This factor requires float conversion.
-        float_conversion *= compute_pow(f.base, f.exponent);
+        float_conversion *=
+            compute_rational_pow(static_cast<long double>(f.base), f.exponent);
       }
     }
 
@@ -98,7 +102,7 @@ private:
 };
 
 template <units FromUnits, units ToUnits>
-constexpr analysis<FromUnits, ToUnits> analyzed;
+constexpr analysis<FromUnits, ToUnits> analysis_object;
 
 } // namespace mu::detail
 

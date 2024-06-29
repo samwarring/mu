@@ -127,10 +127,9 @@ constexpr void prime_factorize(std::vector<prime_factor> &out, ratio base,
 
 /// Given an output vector from one or more calls to `prime_factorize`, modify
 /// it so factors of the same base have their exponents combined. The combined
-/// exponents are reduced to their simplest form.
+/// exponents are not simplified.
 ///
-constexpr void
-simplify_prime_factors(std::vector<prime_factor> &prime_factors) {
+constexpr void combine_prime_factors(std::vector<prime_factor> &prime_factors) {
   if (prime_factors.empty()) {
     return;
   }
@@ -168,9 +167,9 @@ simplify_prime_factors(std::vector<prime_factor> &prime_factors) {
   }
 
   // Simplify the combined exponents.
-  for (auto &f : prime_factors) {
-    f.exponent.simplify();
-  }
+  //   for (auto &f : prime_factors) {
+  //     f.exponent.simplify();
+  //   }
 }
 
 } // namespace mu::detail

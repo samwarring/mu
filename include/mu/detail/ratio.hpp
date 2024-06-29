@@ -41,6 +41,12 @@ struct ratio {
   /// Returns true if the ratio is 1.
   constexpr bool is_identity() const { return num == den; }
 
+  /// Returns true if the ratio is a whole number.
+  constexpr bool is_whole() const { return num % den == 0; }
+
+  /// Returns true if the ratio is a negative value.
+  constexpr bool is_negative() const { return (num < 0) ^ (den < 0); }
+
   /// Returns negative copy of this ratio.
   constexpr ratio operator-() const { return ratio(-num, den); }
 

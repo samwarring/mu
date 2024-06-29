@@ -1,12 +1,20 @@
 #ifndef INCLUDED_MU_TEST_HPP
 #define INCLUDED_MU_TEST_HPP
 #include <gtest/gtest.h>
+#include <limits>
 #include <mu/mu.hpp>
 
 #define ASSERT_LONG_DOUBLE_EQ(actual, expected)                                \
   ASSERT_DOUBLE_EQ((double)(actual), (double)(expected))
 
 #define CONSTEXPR_TEST(suite, case) namespace test_##suite##_##case
+
+constexpr bool is_equal(long double a, long double b) {
+  long double delta = a - b;
+  delta = delta < 0 ? -delta : delta;
+  long double tolerance = std::numeric_limits<long double>::max() * 2;
+  return delta < tolerance;
+}
 
 namespace test {
 
