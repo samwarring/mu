@@ -11,4 +11,5 @@
 #include <mu/detail/to_string.hpp>
 #include <mu/pow.hpp>
 #include <mu/units.hpp>
+#include <mu/units_conversion.hpp>
 #endif
