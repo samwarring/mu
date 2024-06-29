@@ -8,8 +8,10 @@
 
 namespace mu::detail {
 
+/// Size of the pre-computed primes table.
 constexpr std::size_t PRIMES_TABLE_SIZE = 100;
 
+/// Array of pre-computed primes.
 constexpr std::array<std::intmax_t, PRIMES_TABLE_SIZE> PRIMES_TABLE{
     2,   3,   5,   7,   11,  13,  17,  19,  23,  29,  31,  37,  41,  43,  47,
     53,  59,  61,  67,  71,  73,  79,  83,  89,  97,  101, 103, 107, 109, 113,
@@ -25,6 +27,7 @@ constexpr std::array<std::intmax_t, PRIMES_TABLE_SIZE> PRIMES_TABLE{
 constexpr std::size_t PRIMES_TABLE_BATCH_SIZE = 4;
 static_assert(PRIMES_TABLE_SIZE % PRIMES_TABLE_BATCH_SIZE == 0);
 
+/// Represents a factor from the prime-factorization of an integer.
 struct prime_factor {
   std::intmax_t base{2};
   ratio exponent{0};
@@ -48,6 +51,10 @@ struct prime_factor {
   }
 };
 
+/// If `candidate_prime` divides `value`, append `candidate_prime` to the `out`
+/// vector, raised by the provided `exponent`. If `candidate_prime` divides
+/// `value` more than once, the exponent is increased accordingly.
+///
 constexpr void try_prime_factor(std::vector<prime_factor> &out,
                                 std::intmax_t &value, ratio exponent,
                                 std::intmax_t candidate_prime) {
@@ -69,6 +76,10 @@ constexpr void try_prime_factor(std::vector<prime_factor> &out,
   out.push_back(current);
 }
 
+/// Appends the prime factors of `value` raised by `exponent` to the output
+/// vector. This effectively prime-factorizes `value`, and raises each prime
+/// factor by the provided exponent.
+///
 constexpr void prime_factorize_whole_number(std::vector<prime_factor> &out,
                                             std::intmax_t &value,
                                             ratio exponent) {
@@ -97,7 +108,7 @@ constexpr void prime_factorize_whole_number(std::vector<prime_factor> &out,
 }
 
 /// Factorizes a number of the form `base ^ exponent` where `base` and
-/// `exponents` are rational numbers. The resulting prime_factors are pushed
+/// `exponent` are rational numbers. The resulting prime_factors are pushed
 /// into an output vector. The factors of base's numerator preceed the factors
 /// of base's denominator. No effort is made to simplify the resulting factors
 /// (e.g. by combining factors with the same base).
@@ -112,7 +123,7 @@ constexpr void prime_factorize_whole_number(std::vector<prime_factor> &out,
 ///   2. base's denominator is nonzero
 ///   3. exponent's denominator is nonzero
 ///
-/// An example, consider: prime_factorize(out, ratio{89, 36}, ratio{2, 3}).
+/// An example, consider: prime_factorize(out, ratio{49, 36}, ratio{2, 3}).
 ///   - The prime factors of 49 = 2^1 * 7^2
 ///   - The prime factors of 36 = 2^2 * 3^2
 ///   - The prime factors of 1/36 = 2^-2 * 3^-2
@@ -165,11 +176,6 @@ constexpr void combine_prime_factors(std::vector<prime_factor> &prime_factors) {
   } else if (cur->exponent.is_zero()) {
     prime_factors.erase(cur, it);
   }
-
-  // Simplify the combined exponents.
-  //   for (auto &f : prime_factors) {
-  //     f.exponent.simplify();
-  //   }
 }
 
 } // namespace mu::detail

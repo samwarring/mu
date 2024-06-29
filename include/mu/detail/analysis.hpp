@@ -9,13 +9,41 @@
 
 namespace mu::detail {
 
+/// analysis objects perform dimensional analysis between two unit expressions
+/// and determine their relationship to each other.
+///
+/// The analysis itself is performed in the constructor, so the results are
+/// always available from a constructed analysis object.
+///
+/// This is a constexpr class by design, so the dimensional analysis can be
+/// performed at compile-time.
+///
+/// \tparam FromUnits Analyze a conversion from these units
+/// \tparam ToUnits Analyze a conversion to these units.
+///
 template <units FromUnits, units ToUnits> struct analysis {
+
+  /// True if `FromUnits` can be converted to `ToUnits`.
   bool is_convertible = true;
+
+  /// True if `FromUnits` can be converted to `ToUnits` without any scaling
+  /// at all.
   bool is_equivalent = true;
+
+  /// True if `FromUnits` can be converted to `ToUnits` by multiplying the
+  /// source quanity by an integer.
   bool is_int_convertible = true;
+
+  /// If the conversion is convertible by an integer, this holds the integer
+  /// conversion value.
   std::intmax_t int_conversion = 1;
+
+  /// If the conversion is NOT convertible by an integer, this holds the
+  /// floating-point conversion value.
   long double float_conversion = 1.0;
 
+  /// The constructor performs dimensional analysis of the conversion from
+  /// `FromUnits` to `ToUnits`.
   constexpr analysis() {
     // Divide FromUnits by ToUnits, and obtain concrete factors for each factor
     // in the quotient.
@@ -101,6 +129,16 @@ private:
   }
 };
 
+/// A pre-constructed analysis object for the provided unit expressions.
+///
+/// By defining a global pre-constructed analysis object, the analysis between
+/// two unit expressions need not be performed more than once. Compile-time
+/// concepts that depend on dimensional analysis will obtain those results from
+/// the corresponding global `analysis_object`.
+///
+/// \tparam FromUnits Analyze a conversion from these units
+/// \tparam ToUnits Analyze a conversion to these units.
+///
 template <units FromUnits, units ToUnits>
 constexpr analysis<FromUnits, ToUnits> analysis_object;
 

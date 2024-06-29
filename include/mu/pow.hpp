@@ -7,11 +7,20 @@
 
 namespace mu {
 
+/// The pow template represents a unit expression raised to a rational power.
+///
+/// \tparam Base A base unit expression.
+/// \tparam ExpNum The numerator of the exponent.
+/// \tparam ExpDen The denominator of the exponent.
+///
 template <units Base, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 struct pow {};
 
 namespace detail {
 
+/// If the base of a `pow` matches the factor concept, then the resulting `pow`
+/// is also a factor. The exponent of the resulting factor is modified.
+///
 template <factor FactorBase, std::intmax_t ExpNum, std::intmax_t ExpDen>
 struct factor_traits<pow<FactorBase, ExpNum, ExpDen>> {
   using base = typename factor_traits<FactorBase>::base;
@@ -27,6 +36,11 @@ struct factor_traits<pow<FactorBase, ExpNum, ExpDen>> {
       factor_traits<FactorBase>::irrational_value;
 };
 
+/// Wraps each `Ts` in a `mult<Ts...>` inside a `pow`.
+///
+/// Example:
+/// `apply_pow< mult<a, b, c>, 2 >` == `mult< pow<a,2>, pow<b,2>, pow<c,2> >`
+///
 template <units Factors, std::intmax_t ExpNum, std::intmax_t ExpDen>
 struct apply_pow {};
 
@@ -35,10 +49,22 @@ struct apply_pow<mult<Factors...>, ExpNum, ExpDen> {
   using type = mult<pow<Factors, ExpNum, ExpDen>...>;
 };
 
+/// If the base of a `pow` matches the units concept, then the entire `pow`
+/// matches the units concept.
+///
+/// \tparam UnitsBase The base of the pow. Must match `units` concept.
+/// \tparam ExpNum The numerator of the exponent.
+/// \tparam ExpDen The denominator of the exponent.
+///
 template <units UnitsBase, std::intmax_t ExpNum, std::intmax_t ExpDen>
 struct unit_traits<pow<UnitsBase, ExpNum, ExpDen>> {
+  /// Factors of a pow are the factors of the base, except each factor is
+  /// wrapped in a pow with the same exponent.
   using factors = typename apply_pow<typename unit_traits<UnitsBase>::factors,
                                      ExpNum, ExpDen>::type;
+
+  /// To display a pow, the formatted base is appended with "^" followed by the
+  /// rational exponent.
   constexpr static std::string format(const format_options &opts) {
     std::string ret = unit_traits<UnitsBase>::format(opts);
     ret += "^" + to_string(ExpNum, ExpDen);
