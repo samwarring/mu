@@ -110,8 +110,8 @@ constexpr auto units_conversion_v =
 /// \tparam ToUnits Converting to these units. Must match `units` concept.
 ///
 template <units FromUnits, units ToUnits>
-constexpr auto units_conversion_t =
-    std::remove_cvref_t<decltype(units_conversion_v<FromUnits, ToUnits>)>;
+using units_conversion_t =
+    typename detail::units_conversion<FromUnits, ToUnits>::type;
 
 } // namespace mu
 
