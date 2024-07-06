@@ -1,5 +1,6 @@
 #ifndef INCLUDED_MU_QUANTITY_HPP
 #define INCLUDED_MU_QUANTITY_HPP
+#include <iostream>
 #include <mu/rep.hpp>
 #include <mu/units.hpp>
 #include <mu/units_conversion.hpp>
@@ -151,6 +152,48 @@ quantity_cast(quantity<FromRep, FromUnits> &&from_quantity) {
   return quantity<ToRep, ToUnits>{
       detail::convert_lossily<ToRep, ToUnits, FromUnits>(
           std::move(from_quantity).value())};
+}
+
+template <rep LhsRep, units LhsUnits, rep RhsRep, units RhsUnits>
+requires units_equivalent_to<LhsUnits, RhsUnits>
+constexpr bool operator==(const quantity<LhsRep, LhsUnits> &lhs,
+                          const quantity<RhsRep, RhsUnits> &rhs) {
+  return lhs.value() == rhs.value();
+}
+
+template <rep LhsRep, units LhsUnits, rep RhsRep, units RhsUnits>
+requires units_equivalent_to<LhsUnits, RhsUnits>
+constexpr bool operator!=(const quantity<LhsRep, LhsUnits> &lhs,
+                          const quantity<RhsRep, RhsUnits> &rhs) {
+  return lhs.value() != rhs.value();
+}
+
+template <rep LhsRep, units LhsUnits, rep RhsRep, units RhsUnits>
+requires units_equivalent_to<LhsUnits, RhsUnits>
+constexpr bool operator<(const quantity<LhsRep, LhsUnits> &lhs,
+                         const quantity<RhsRep, RhsUnits> &rhs) {
+  return lhs.value() < rhs.value();
+}
+
+template <rep LhsRep, units LhsUnits, rep RhsRep, units RhsUnits>
+requires units_equivalent_to<LhsUnits, RhsUnits>
+constexpr bool operator<=(const quantity<LhsRep, LhsUnits> &lhs,
+                          const quantity<RhsRep, RhsUnits> &rhs) {
+  return lhs.value() <= rhs.value();
+}
+
+template <rep LhsRep, units LhsUnits, rep RhsRep, units RhsUnits>
+requires units_equivalent_to<LhsUnits, RhsUnits>
+constexpr bool operator>(const quantity<LhsRep, LhsUnits> &lhs,
+                         const quantity<RhsRep, RhsUnits> &rhs) {
+  return lhs.value() > rhs.value();
+}
+
+template <rep LhsRep, units LhsUnits, rep RhsRep, units RhsUnits>
+requires units_equivalent_to<LhsUnits, RhsUnits>
+constexpr bool operator>=(const quantity<LhsRep, LhsUnits> &lhs,
+                          const quantity<RhsRep, RhsUnits> &rhs) {
+  return lhs.value() >= rhs.value();
 }
 
 template <rep Rep, units Units>

@@ -1,5 +1,15 @@
 #include "mu_test.hpp"
 
+// TODO: A version of this function should become part of the library, but
+// it will need to handle different formats.
+namespace mu {
+template <rep Rep, units Units>
+std::ostream &operator<<(std::ostream &out, const quantity<Rep, Units> &q) {
+  mu::format_options fopts{};
+  return out << q.value() << ' ' << detail::unit_traits<Units>::format(fopts);
+}
+} // namespace mu
+
 TEST(MuQuantity, ConstructIntApplesFromValue) {
   mu::quantity<int, apples> a{5};
   ASSERT_EQ(a.value(), 5);
@@ -110,4 +120,42 @@ TEST(MuQuantity, DivideIntApplesByDoubleOranges) {
       mu::units_equivalent_to<typename decltype(c)::units_type,
                               mu::mult<apples, mu::pow<oranges, -1>>>);
   ASSERT_EQ(c.value(), 12.5);
+}
+
+TEST(MuQuantity, CompareEqualApplesToApples) {
+  mu::quantity<int, apples> i{12};
+  mu::quantity<double, apples> d{12};
+  ASSERT_EQ(i, d);
+}
+
+TEST(MuQuantity, CompareNotEqualApplesToApples) {
+  mu::quantity<int, apples> a{12};
+  mu::quantity<int, apples> b{13};
+  ASSERT_NE(a, b);
+}
+
+TEST(MuQuantity, CompareLessApplesToApples) {
+  mu::quantity<int, apples> a{12};
+  mu::quantity<int, apples> b{13};
+  ASSERT_LT(a, b);
+}
+
+TEST(MuQuantity, CompareLessEqualApplesToApples) {
+  mu::quantity<int, apples> a{12};
+  mu::quantity<int, apples> b{13};
+  ASSERT_LE(a, b);
+  ASSERT_LE(b, b);
+}
+
+TEST(MuQuantity, CompareGreaterApplesToApples) {
+  mu::quantity<int, apples> a{13};
+  mu::quantity<int, apples> b{12};
+  ASSERT_GT(a, b);
+}
+
+TEST(MuQuantity, CompareGreaterEqualApplesToApples) {
+  mu::quantity<int, apples> a{13};
+  mu::quantity<int, apples> b{12};
+  ASSERT_GE(a, b);
+  ASSERT_GE(a, a);
 }
