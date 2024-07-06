@@ -10,28 +10,38 @@ namespace detail {
 /// A template struct that defines the multiplier needed to convert `FromUnits`
 /// to `ToUnits`. The value may be an integer, or a floating point value.
 ///
-/// By default, use the floating point conversion value determined by unit
-/// analysis.
+/// If the conversion value is an integer, this struct stores the value using
+/// the narrowest possible type. If the conversion value is not an integer, the
+/// struct stores the value as a `long double`.
 ///
 /// \tparam FromUnits Converting from these units.
 /// \tparam ToUnits Converting to these units.
 ///
 template <units FromUnits, units ToUnits> struct units_conversion {
-  constexpr static auto value =
-      analysis_object<FromUnits, ToUnits>.float_conversion;
-};
+private:
+  constexpr static auto &ao = analysis_object<FromUnits, ToUnits>;
+  constexpr static bool fits_int8 =
+      ao.int_conversion <= std::numeric_limits<int8_t>::max();
+  constexpr static bool fits_int16 =
+      ao.int_conversion <= std::numeric_limits<int16_t>::max();
+  constexpr static bool fits_int32 =
+      ao.int_conversion <= std::numeric_limits<int32_t>::max();
+  constexpr static bool fits_int64 =
+      ao.int_conversion <= std::numeric_limits<int64_t>::max();
 
-/// Specialization of `units_conversion` when the conversion can be performed by
-/// multiplying by an integer.
-///
-/// \tparam FromUnits Converting from these units.
-/// \tparam ToUnits Converting to these units.
-///
-template <units FromUnits, units ToUnits>
-requires(detail::analysis_object<FromUnits, ToUnits>.is_int_convertible)
-struct units_conversion<FromUnits, ToUnits> {
-  constexpr static auto value =
-      analysis_object<FromUnits, ToUnits>.int_conversion;
+public:
+  // clang-format off
+  using type = std::conditional_t<
+      /* if   */ !ao.is_int_convertible,        /* then */ long double,
+      /* elif */ std::conditional_t<fits_int8,  /* then */ std::int8_t,
+      /* elif */ std::conditional_t<fits_int16, /* then */ std::int16_t,
+      /* elif */ std::conditional_t<fits_int32, /* then */ std::int32_t,
+      /* elif */ std::conditional_t<fits_int64, /* then */ std::int64_t,
+      /* else */ std::intmax_t>>>>>;
+  // clang-format on
+
+  constexpr static auto value = static_cast<type>(
+      ao.is_int_convertible ? ao.int_conversion : ao.float_conversion);
 };
 
 } // namespace detail
