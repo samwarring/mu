@@ -11,28 +11,28 @@ CONSTEXPR_TEST(MuAnalysis, EmptyToEmpty) {
 }
 
 CONSTEXPR_TEST(MuAnalysis, ApplesToApples) {
-  using from = test::apples;
-  using to = test::apples;
+  using from = apples;
+  using to = apples;
   static_assert(analysis_object<from, to>.is_convertible);
   static_assert(analysis_object<from, to>.is_equivalent);
 }
 
 CONSTEXPR_TEST(MuAnalysis, ApplesToOranges) {
-  using from = test::apples;
-  using to = test::oranges;
+  using from = apples;
+  using to = oranges;
   static_assert(!analysis_object<from, to>.is_convertible);
   static_assert(!analysis_object<from, to>.is_equivalent);
 }
 
 CONSTEXPR_TEST(MuAnalysis, ApplesPerApplesToRatio) {
-  using from = mu::mult<test::apples, mu::pow<test::apples, -1>>;
+  using from = mu::mult<apples, mu::pow<apples, -1>>;
   using to = std::ratio<1>;
   static_assert(analysis_object<from, to>.is_convertible);
   static_assert(analysis_object<from, to>.is_equivalent);
 }
 
 TEST(MuAnalysis, ApplesPerApplesToRatio) {
-  using from = mu::mult<test::apples, mu::pow<test::apples, -1>>;
+  using from = mu::mult<apples, mu::pow<apples, -1>>;
   using to = std::ratio<1>;
   analysis<from, to> a;
   ASSERT_TRUE(a.is_convertible);
@@ -42,8 +42,8 @@ TEST(MuAnalysis, ApplesPerApplesToRatio) {
 }
 
 CONSTEXPR_TEST(MuAnalysis, ApplesToHalfApples) {
-  using from = test::apples;
-  using to = mu::mult<std::ratio<1, 2>, test::apples>;
+  using from = apples;
+  using to = mu::mult<std::ratio<1, 2>, apples>;
   static_assert(analysis_object<from, to>.is_convertible);
   static_assert(!analysis_object<from, to>.is_equivalent);
   static_assert(analysis_object<from, to>.is_int_convertible);
@@ -51,8 +51,8 @@ CONSTEXPR_TEST(MuAnalysis, ApplesToHalfApples) {
 }
 
 CONSTEXPR_TEST(MuAnalysis, ApplesToDozenApples) {
-  using from = test::apples;
-  using to = mu::mult<std::ratio<12>, test::apples>;
+  using from = apples;
+  using to = mu::mult<std::ratio<12>, apples>;
   static_assert(analysis_object<from, to>.is_convertible);
   static_assert(!analysis_object<from, to>.is_equivalent);
   static_assert(!analysis_object<from, to>.is_int_convertible);

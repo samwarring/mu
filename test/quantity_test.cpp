@@ -1,7 +1,5 @@
 #include "mu_test.hpp"
 
-using namespace test;
-
 TEST(MuQuantity, ConstructIntApplesFromValue) {
   mu::quantity<int, apples> a{5};
   ASSERT_EQ(a.value(), 5);

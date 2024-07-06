@@ -38,8 +38,8 @@ CONSTEXPR_TEST(MuUnits, StdRatio) {
 }
 
 CONSTEXPR_TEST(MuUnits, BaseUnit) {
-  using t = test::apples;
-  using expected_factors = mu::mult<test::apples>;
+  using t = apples;
+  using expected_factors = mu::mult<apples>;
   constexpr static const char *expected_format_names = "apples";
   constexpr static const char *expected_format_symbols = "🍎";
   static_assert(units<t>);
@@ -49,8 +49,8 @@ CONSTEXPR_TEST(MuUnits, BaseUnit) {
 }
 
 CONSTEXPR_TEST(MuUnits, BaseConstant) {
-  using t = test::golden;
-  using expected_factors = mu::mult<test::golden>;
+  using t = golden;
+  using expected_factors = mu::mult<golden>;
   constexpr static const char *expected_format_names = "golden";
   constexpr static const char *expected_format_symbols = "φ";
   static_assert(units<t>);
@@ -60,8 +60,8 @@ CONSTEXPR_TEST(MuUnits, BaseConstant) {
 }
 
 CONSTEXPR_TEST(MuUnits, CompositeUnit) {
-  using t = test::golden_apples;
-  using expected_factors = mu::mult<test::golden, test::apples>;
+  using t = golden_apples;
+  using expected_factors = mu::mult<golden, apples>;
   constexpr static const char *expected_format_names = "golden_apples";
   constexpr static const char *expected_format_symbols = "🍏";
   static_assert(units<t>);
@@ -71,10 +71,10 @@ CONSTEXPR_TEST(MuUnits, CompositeUnit) {
 }
 
 CONSTEXPR_TEST(MuUnits, CompositeConstant) {
-  using t = test::universal_fruit_constant;
+  using t = universal_fruit_constant;
   using expected_factors =
-      mu::mult<composite_constant_value<test::universal_fruit_constant>,
-               test::apples, test::oranges>;
+      mu::mult<composite_constant_value<universal_fruit_constant>, apples,
+               oranges>;
   constexpr static const char *expected_format_names =
       "universal_fruit_constant";
   constexpr static const char *expected_format_symbols = "Ω";
@@ -85,8 +85,8 @@ CONSTEXPR_TEST(MuUnits, CompositeConstant) {
 }
 
 CONSTEXPR_TEST(MuUnits, BaseUnitSquared) {
-  using t = mu::pow<test::apples, 2>;
-  using expected_factors = mu::mult<mu::pow<test::apples, 2>>;
+  using t = mu::pow<apples, 2>;
+  using expected_factors = mu::mult<mu::pow<apples, 2>>;
   constexpr static const char *expected_format_names = "apples^2";
   constexpr static const char *expected_format_symbols = "🍎^2";
   static_assert(units<t>);
@@ -96,10 +96,10 @@ CONSTEXPR_TEST(MuUnits, BaseUnitSquared) {
 }
 
 CONSTEXPR_TEST(MuUnits, CompositeConstantSquared) {
-  using t = mu::pow<test::universal_fruit_constant, 2>;
-  using expected_factors = mu::mult<
-      mu::pow<composite_constant_value<test::universal_fruit_constant>, 2>,
-      mu::pow<test::apples, 2>, mu::pow<test::oranges, 2>>;
+  using t = mu::pow<universal_fruit_constant, 2>;
+  using expected_factors =
+      mu::mult<mu::pow<composite_constant_value<universal_fruit_constant>, 2>,
+               mu::pow<apples, 2>, mu::pow<oranges, 2>>;
   constexpr static const char *expected_format_names =
       "universal_fruit_constant^2";
   constexpr static const char *expected_format_symbols = "Ω^2";
@@ -110,8 +110,8 @@ CONSTEXPR_TEST(MuUnits, CompositeConstantSquared) {
 }
 
 CONSTEXPR_TEST(MuUnits, MultUnits) {
-  using t = mu::mult<test::golden, test::oranges>;
-  using expected_factors = mu::mult<test::golden, test::oranges>;
+  using t = mu::mult<golden, oranges>;
+  using expected_factors = mu::mult<golden, oranges>;
   constexpr static const char *expected_format_names = "(golden * oranges)";
   constexpr static const char *expected_format_symbols = "(φ * 🍊)";
   static_assert(units<t>);
@@ -121,9 +121,8 @@ CONSTEXPR_TEST(MuUnits, MultUnits) {
 }
 
 CONSTEXPR_TEST(MuUnits, MultUnitsSquared) {
-  using t = mu::pow<mu::mult<test::golden, test::oranges>, 2>;
-  using expected_factors =
-      mu::mult<mu::pow<test::golden, 2>, mu::pow<test::oranges, 2>>;
+  using t = mu::pow<mu::mult<golden, oranges>, 2>;
+  using expected_factors = mu::mult<mu::pow<golden, 2>, mu::pow<oranges, 2>>;
   constexpr static const char *expected_format_names = "(golden * oranges)^2";
   constexpr static const char *expected_format_symbols = "(φ * 🍊)^2";
   static_assert(units<t>);

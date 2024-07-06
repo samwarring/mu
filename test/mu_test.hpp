@@ -16,8 +16,6 @@ constexpr bool is_equal(long double a, long double b) {
   return delta < tolerance;
 }
 
-namespace test {
-
 struct apples {
   constexpr static const char *name = "apples";
   constexpr static const char *symbol = "🍎";
@@ -46,7 +44,5 @@ struct universal_fruit_constant {
   constexpr static long double value = 7.499135;
   using units = mu::mult<apples, oranges>;
 };
-
-} // namespace test
 
 #endif

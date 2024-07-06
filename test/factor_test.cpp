@@ -44,8 +44,8 @@ CONSTEXPR_TEST(MuFactor, StdRatio) {
 }
 
 CONSTEXPR_TEST(MuFactor, BaseUnit) {
-  using t = test::apples;
-  using expected_base = test::apples;
+  using t = apples;
+  using expected_base = apples;
   constexpr static ratio expected_exponent = 1;
   constexpr static ratio expected_value = 1;
   static_assert(base_unit<t>);
@@ -57,10 +57,10 @@ CONSTEXPR_TEST(MuFactor, BaseUnit) {
 }
 
 CONSTEXPR_TEST(MuFactor, BaseConstant) {
-  using t = test::golden;
-  using expected_base = test::golden;
+  using t = golden;
+  using expected_base = golden;
   constexpr static ratio expected_exponent = 1;
-  constexpr static long double expected_value = test::golden::value;
+  constexpr static long double expected_value = golden::value;
   static_assert(base_constant<t>);
   static_assert(factor<t>);
   static_assert(has_base<t, expected_base>);
@@ -70,12 +70,10 @@ CONSTEXPR_TEST(MuFactor, BaseConstant) {
 }
 
 CONSTEXPR_TEST(MuFactor, CompositeConstantValue) {
-  using t = composite_constant_value<test::universal_fruit_constant>;
-  using expected_base =
-      composite_constant_value<test::universal_fruit_constant>;
+  using t = composite_constant_value<universal_fruit_constant>;
+  using expected_base = composite_constant_value<universal_fruit_constant>;
   constexpr static ratio expected_exponent = 1;
-  constexpr static long double expected_value =
-      test::universal_fruit_constant::value;
+  constexpr static long double expected_value = universal_fruit_constant::value;
   static_assert(factor<t>);
   static_assert(has_base<t, expected_base>);
   static_assert(!is_dimensional<t>);
@@ -84,8 +82,8 @@ CONSTEXPR_TEST(MuFactor, CompositeConstantValue) {
 }
 
 CONSTEXPR_TEST(MuFactor, BaseUnitSquared) {
-  using t = mu::pow<test::oranges, 2>;
-  using expected_base = test::oranges;
+  using t = mu::pow<oranges, 2>;
+  using expected_base = oranges;
   constexpr static ratio expected_exponent = 2;
   constexpr static ratio expected_value = 1;
   static_assert(factor<t>);
@@ -96,10 +94,10 @@ CONSTEXPR_TEST(MuFactor, BaseUnitSquared) {
 }
 
 CONSTEXPR_TEST(MuFactor, BaseConstantSquareRoot) {
-  using t = mu::pow<test::golden, 1, 2>;
-  using expected_base = test::golden;
+  using t = mu::pow<golden, 1, 2>;
+  using expected_base = golden;
   constexpr static ratio expected_exponent{1, 2};
-  constexpr static long double expected_value = test::golden::value;
+  constexpr static long double expected_value = golden::value;
   static_assert(factor<t>);
   static_assert(has_base<t, expected_base>);
   static_assert(!is_dimensional<t>);
@@ -108,8 +106,8 @@ CONSTEXPR_TEST(MuFactor, BaseConstantSquareRoot) {
 }
 
 CONSTEXPR_TEST(MuFactor, BaseUnitSquaredSquared) {
-  using t = mu::pow<mu::pow<test::oranges, 2>, 2>;
-  using expected_base = test::oranges;
+  using t = mu::pow<mu::pow<oranges, 2>, 2>;
+  using expected_base = oranges;
   constexpr static ratio expected_exponent = 4;
   constexpr static ratio expected_value = 1;
   static_assert(factor<t>);

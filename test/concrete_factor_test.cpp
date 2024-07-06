@@ -17,7 +17,7 @@ CONSTEXPR_TEST(MuConcreteFactor, Empty) {
 }
 
 CONSTEXPR_TEST(MuConcreteFactor, BaseUnit) {
-  using t = test::apples;
+  using t = apples;
   using g = concrete_factor_generator<typename unit_traits<t>::factors>;
   constexpr auto fs = g::make_concrete_factors();
   static_assert(fs.size() == 1);
@@ -28,20 +28,20 @@ CONSTEXPR_TEST(MuConcreteFactor, BaseUnit) {
   static_assert(f.is_dimensional);
 
   // If base does not appear in the intial factors, then its base id is unknown.
-  constexpr concrete_factor_base_id other_base_id = g::base_id<test::oranges>;
+  constexpr concrete_factor_base_id other_base_id = g::base_id<oranges>;
   static_assert(other_base_id == UNKNOWN_BASE_ID);
 }
 
 CONSTEXPR_TEST(MuConcreteFactor, CompositeConstant) {
-  using t = test::universal_fruit_constant;
+  using t = universal_fruit_constant;
   using g = concrete_factor_generator<typename unit_traits<t>::factors>;
   constexpr auto fs = g::make_concrete_factors();
   static_assert(fs.size() == 3);
 
   // Expected factors
-  using t0 = composite_constant_value<test::universal_fruit_constant>;
-  using t1 = test::apples;
-  using t2 = test::oranges;
+  using t0 = composite_constant_value<universal_fruit_constant>;
+  using t1 = apples;
+  using t2 = oranges;
 
   // Get base ids for the expected factors.
   constexpr auto i0 = g::base_id<t0>;
@@ -69,7 +69,7 @@ CONSTEXPR_TEST(MuConcreteFactor, CompositeConstant) {
   static_assert(f0.exponent == ratio{1});
   static_assert(!f0.is_dimensional);
   static_assert(!f0.is_rational_value);
-  static_assert(f0.irrational_value == test::universal_fruit_constant::value);
+  static_assert(f0.irrational_value == universal_fruit_constant::value);
 
   // check f1
   constexpr concrete_factor f1 = fs[1];

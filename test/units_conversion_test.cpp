@@ -4,7 +4,6 @@ using mu::units_conversion_t;
 using mu::units_conversion_v;
 using mu::units_convertible_to;
 using mu::units_equivalent_to;
-using namespace test;
 
 CONSTEXPR_TEST(MuConversion, ApplesToOranges) {
   using from = apples;
