@@ -249,7 +249,7 @@ constexpr auto operator-(const quantity<Rep, Units> &q) {
 }
 
 template <rep LhsRep, units LhsUnits, rep RhsRep, units RhsUnits>
-requires units_equivalent_to<LhsUnits, RhsUnits>
+requires units_equivalent_to<LhsUnits, RhsUnits> && rep_addable<LhsRep, RhsRep>
 constexpr auto operator+(const quantity<LhsRep, LhsUnits> &lhs,
                          const quantity<RhsRep, RhsUnits> &rhs) {
   auto sum_value = lhs.value() + rhs.value();
@@ -258,7 +258,8 @@ constexpr auto operator+(const quantity<LhsRep, LhsUnits> &lhs,
 }
 
 template <rep LhsRep, units LhsUnits, rep RhsRep, units RhsUnits>
-requires units_equivalent_to<LhsUnits, RhsUnits>
+requires units_equivalent_to<LhsUnits, RhsUnits> &&
+         rep_subtractable<LhsRep, RhsRep>
 constexpr auto operator-(const quantity<LhsRep, LhsUnits> &lhs,
                          const quantity<RhsRep, RhsUnits> &rhs) {
   auto difference_value = lhs.value() - rhs.value();
@@ -267,6 +268,7 @@ constexpr auto operator-(const quantity<LhsRep, LhsUnits> &lhs,
 }
 
 template <rep LhsRep, units LhsUnits, rep RhsRep, units RhsUnits>
+requires rep_multiplicable<LhsRep, RhsRep>
 constexpr auto operator*(const quantity<LhsRep, LhsUnits> &lhs,
                          const quantity<RhsRep, RhsUnits> &rhs) {
   auto product_value = lhs.value() * rhs.value();
@@ -276,6 +278,7 @@ constexpr auto operator*(const quantity<LhsRep, LhsUnits> &lhs,
 }
 
 template <rep LhsRep, units LhsUnits, rep RhsRep, units RhsUnits>
+requires rep_dividable<LhsRep, RhsRep>
 constexpr auto operator/(const quantity<LhsRep, LhsUnits> &lhs,
                          const quantity<RhsRep, RhsUnits> &rhs) {
   auto quotient_value = lhs.value() / rhs.value();

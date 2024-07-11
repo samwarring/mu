@@ -103,6 +103,13 @@ TEST(MuQuantity, AddDoubleApplesToIntApples) {
   ASSERT_EQ(c.value(), 67.5);
 }
 
+TEST(MuQuantity, SubtractIntApplesFromIntApples) {
+  mu::quantity<int, apples> a{10};
+  mu::quantity<int, apples> b{3};
+  auto c = a - b;
+  ASSERT_EQ(c.value(), 7);
+}
+
 TEST(MuQuantity, MultiplyIntApplesByDoubleOranges) {
   mu::quantity<int, apples> a{10};
   mu::quantity<double, oranges> b{12.5};
