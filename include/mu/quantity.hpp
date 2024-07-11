@@ -55,6 +55,17 @@ concept quantity_lossily_convertible_to = requires {
                quantity_lossily_scalable_to<FromRep, FromUnits, ToRep, ToUnits>;
 };
 
+template <class FromRep, class FromUnits, class ToRep, class ToUnits>
+concept quantity_only_lossily_convertible_to = requires {
+  requires rep<FromRep>;
+  requires rep<ToRep>;
+  requires units<FromUnits>;
+  requires units<ToUnits>;
+  requires quantity_lossily_convertible_to<FromRep, FromUnits, ToRep, ToUnits>;
+  requires !quantity_losslessly_convertible_to<FromRep, FromUnits, ToRep,
+                                               ToUnits>;
+};
+
 namespace detail {
 
 template <rep ToRep, units ToUnits, units FromUnits, rep FromRep>
@@ -105,14 +116,30 @@ public:
             from_quantity.value())} {}
 
   template <rep FromRep, units FromUnits>
+  requires quantity_only_lossily_convertible_to<FromRep, FromUnits, Rep, Units>
+  constexpr quantity(const quantity<FromRep, FromUnits> &) = delete;
+
+  template <rep FromRep, units FromUnits>
+  requires(!units_convertible_to<FromUnits, ToUnits>)
+  constexpr quantity(const quantity<FromRep, FromUnits> &) = delete;
+
+  template <rep FromRep, units FromUnits>
   requires quantity_losslessly_convertible_to<FromRep, FromUnits, Rep, Units>
   constexpr quantity(quantity<FromRep, FromUnits> &&from_quantity)
       : value_{detail::convert_losslessly<Rep, Units, FromUnits>(
             std::move(from_quantity).value())} {}
 
   template <rep FromRep, units FromUnits>
+  requires quantity_only_lossily_convertible_to<FromRep, FromUnits, Rep, Units>
+  constexpr quantity(quantity<FromRep, FromUnits> &&) = delete;
+
+  template <rep FromRep, units FromUnits>
+  requires(!units_convertible_to<FromUnits, ToUnits>)
+  constexpr quantity(quantity<FromRep, FromUnits> &&) = delete;
+
+  template <rep FromRep, units FromUnits>
   requires quantity_losslessly_convertible_to<FromRep, FromUnits, Rep, Units>
-  quantity<Rep, Units> &
+  constexpr quantity<Rep, Units> &
   operator=(const quantity<FromRep, FromUnits> &from_quantity) {
     value_ = detail::convert_losslessly<Rep, Units, FromUnits>(
         from_quantity.value());
@@ -121,12 +148,22 @@ public:
 
   template <rep FromRep, units FromUnits>
   requires quantity_losslessly_convertible_to<FromRep, FromUnits, Rep, Units>
-  quantity<Rep, Units> &
+  constexpr quantity<Rep, Units> &
   operator=(quantity<FromRep, FromUnits> &&from_quantity) {
     value_ = detail::convert_losslessly<Rep, Units, FromUnits>(
         std::move(from_quantity).value());
     return *this;
   }
+
+  template <rep FromRep, units FromUnits>
+  requires quantity_only_lossily_convertible_to<FromRep, FromUnits, Rep, Units>
+  constexpr quantity<Rep, Units> &
+  operator=(quantity<FromRep, FromUnits> &&) = delete;
+
+  template <rep FromRep, units FromUnits>
+  requires(!units_convertible_to<FromUnits, ToUnits>)
+  constexpr quantity<Rep, Units> &
+  operator=(quantity<FromRep, FromUnits> &&) = delete;
 
   constexpr Rep value() const & { return value_; }
 
@@ -146,6 +183,11 @@ quantity_cast(const quantity<FromRep, FromUnits> &from_quantity) {
 }
 
 template <rep ToRep, units ToUnits, rep FromRep, units FromUnits>
+requires(!units_convertible_to<FromUnits, ToUnits>)
+constexpr quantity<ToRep, ToUnits>
+quantity_cast(const quantity<FromRep, FromUnits> &) = delete;
+
+template <rep ToRep, units ToUnits, rep FromRep, units FromUnits>
 requires quantity_lossily_convertible_to<FromRep, FromUnits, ToRep, ToUnits>
 constexpr quantity<ToRep, ToUnits>
 quantity_cast(quantity<FromRep, FromUnits> &&from_quantity) {
@@ -153,6 +195,11 @@ quantity_cast(quantity<FromRep, FromUnits> &&from_quantity) {
       detail::convert_lossily<ToRep, ToUnits, FromUnits>(
           std::move(from_quantity).value())};
 }
+
+template <rep ToRep, units ToUnits, rep FromRep, units FromUnits>
+requires(!units_convertible_to<FromUnits, ToUnits>)
+constexpr quantity<ToRep, ToUnits>
+quantity_cast(quantity<FromRep, FromUnits> &&from_quantity) = delete;
 
 template <rep LhsRep, units LhsUnits, rep RhsRep, units RhsUnits>
 requires units_equivalent_to<LhsUnits, RhsUnits>
