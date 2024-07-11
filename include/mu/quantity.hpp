@@ -277,6 +277,22 @@ constexpr auto operator*(const quantity<LhsRep, LhsUnits> &lhs,
   return quantity<product_rep, product_units>{std::move(product_value)};
 }
 
+template <rep LhsRep, units LhsUnits, class RhsType>
+requires rep_multiplicable<LhsRep, RhsType>
+constexpr auto operator*(const quantity<LhsRep, LhsUnits> &lhs, RhsType &&rhs) {
+  auto product_value = lhs.value() * std::forward<RhsType>(rhs);
+  using product_rep = std::remove_cvref_t<decltype(product_value)>;
+  return quantity<product_rep, LhsUnits>{std::move(product_value)};
+}
+
+template <class LhsType, rep RhsRep, units RhsUnits>
+requires rep_multiplicable<LhsType, RhsRep>
+constexpr auto operator*(LhsType &&lhs, const quantity<RhsRep, RhsUnits> &rhs) {
+  auto product_value = std::forward<LhsType>(lhs) * rhs.value();
+  using product_rep = std::remove_cvref_t<decltype(product_value)>;
+  return quantity<product_rep, RhsUnits>{std::move(product_value)};
+}
+
 template <rep LhsRep, units LhsUnits, rep RhsRep, units RhsUnits>
 requires rep_dividable<LhsRep, RhsRep>
 constexpr auto operator/(const quantity<LhsRep, LhsUnits> &lhs,
@@ -285,6 +301,23 @@ constexpr auto operator/(const quantity<LhsRep, LhsUnits> &lhs,
   using quotient_rep = std::remove_cvref_t<decltype(quotient_value)>;
   using quotient_units = mu::mult<LhsUnits, mu::pow<RhsUnits, -1>>;
   return quantity<quotient_rep, quotient_units>{std::move(quotient_value)};
+}
+
+template <rep LhsRep, units LhsUnits, class RhsType>
+requires rep_dividable<LhsRep, RhsType>
+constexpr auto operator/(const quantity<LhsRep, LhsUnits> &lhs, RhsType &&rhs) {
+  auto quotient_value = lhs.value() / std::forward<RhsType>(rhs);
+  using quotient_rep = std::remove_cvref_t<decltype(quotient_value)>;
+  return quantity<quotient_rep, LhsUnits>{std::move(quotient_value)};
+}
+
+template <class LhsType, rep RhsRep, units RhsUnits>
+requires rep_dividable<LhsType, RhsRep>
+constexpr auto operator/(LhsType &&lhs, const quantity<RhsRep, RhsUnits> &rhs) {
+  auto quotient_value = std::forward<LhsType>(lhs) / rhs.value();
+  using quotient_rep = std::remove_cvref_t<decltype(quotient_value)>;
+  return quantity<quotient_rep, mu::pow<RhsUnits, -1>>{
+      std::move(quotient_value)};
 }
 
 } // namespace mu

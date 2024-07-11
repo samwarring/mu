@@ -201,55 +201,48 @@ concept rep_lossily_scalable_to = requires(
   requires rep_lossily_castable_to<decltype(from_value * scale_value), ToRep>;
 };
 
-/// Concept is `true` if two reps can be added together, and the resulting type
-/// is also a `rep`.
+/// Concept is `true` if two types can be added together, and the resulting type
+/// is also a `rep`. The original types need not satisfy `rep`.
 ///
-/// \tparam LhsRep Rep type on the left side of the `+` operator.
-/// \tparam LhsRep Rep type on the right side of the `+` operator.
+/// \tparam LhsType Type on the left side of the `+` operator.
+/// \tparam RhsType Type on the right side of the `+` operator.
 ///
-template <class LhsRep, class RhsRep>
-concept rep_addable = requires(LhsRep lhs, RhsRep rhs) {
-  requires rep<LhsRep>;
-  requires rep<RhsRep>;
+template <class LhsRep, class RhsType>
+concept rep_addable = requires(LhsRep lhs, RhsType rhs) {
   { lhs + rhs } -> rep<>;
 };
 
-/// Concept is `true` if an `RhsRep` can be subtracted from an `LhsRep`, and the
-/// resulting type is also a `rep`.
+/// Concept is `true` if an `RhsType` can be subtracted from an `LhsType`, and
+/// the resulting type is also a `rep`. The original types need not satisfy
+/// `rep`.
 ///
-/// \tparam LhsRep Rep type on the left side of the `-` operator.
-/// \tparam LhsRep Rep type on the right side of the `-` operator.
+/// \tparam LhsType Type on the left side of the `-` operator.
+/// \tparam RhsType Type on the right side of the `-` operator.
 ///
-template <class LhsRep, class RhsRep>
-concept rep_subtractable = requires(LhsRep lhs, RhsRep rhs) {
-  requires rep<LhsRep>;
-  requires rep<RhsRep>;
+template <class LhsType, class RhsType>
+concept rep_subtractable = requires(LhsType lhs, RhsType rhs) {
   { lhs - rhs } -> rep<>;
 };
 
-/// Concept is `true` if two reps can be multiplied together, and the resulting
-/// type is also a `rep`.
+/// Concept is `true` if two types can be multiplied together, and the resulting
+/// type is also a `rep`. The original types need not satisfy `rep`.
 ///
-/// \tparam LhsRep Rep type on the left side of the `*` operator.
-/// \tparam LhsRep Rep type on the right side of the `*` operator.
+/// \tparam LhsType Type on the left side of the `*` operator.
+/// \tparam RhsType Type on the right side of the `*` operator.
 ///
-template <class LhsRep, class RhsRep>
-concept rep_multiplicable = requires(LhsRep lhs, RhsRep rhs) {
-  requires rep<LhsRep>;
-  requires rep<RhsRep>;
+template <class LhsType, class RhsType>
+concept rep_multiplicable = requires(LhsType lhs, RhsType rhs) {
   { lhs *rhs } -> rep<>;
 };
 
-/// Concept is `true` if an `LhsRep` can be divided by an `RhsRep`, and the
-/// resulting type is also a `rep`.
+/// Concept is `true` if an `LhsType` can be divided by an `RhsType`, and the
+/// resulting type is a `rep`. The original types need not satisfy `rep`.
 ///
-/// \tparam LhsRep Rep type on the left side of the `/` operator.
-/// \tparam LhsRep Rep type on the right side of the `/` operator.
+/// \tparam LhsType Type on the left side of the `/` operator.
+/// \tparam RhsType Type on the right side of the `/` operator.
 ///
-template <class LhsRep, class RhsRep>
-concept rep_dividable = requires(LhsRep lhs, RhsRep rhs) {
-  requires rep<LhsRep>;
-  requires rep<RhsRep>;
+template <class LhsType, class RhsType>
+concept rep_dividable = requires(LhsType lhs, RhsType rhs) {
   { lhs / rhs } -> rep<>;
 };
 

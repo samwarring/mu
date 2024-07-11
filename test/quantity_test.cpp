@@ -119,6 +119,15 @@ TEST(MuQuantity, MultiplyIntApplesByDoubleOranges) {
   ASSERT_EQ(c.value(), 125.0);
 }
 
+TEST(MuQuantity, MultiplyIntApplesByRawDouble) {
+  mu::quantity<int, apples> a{10};
+  mu::quantity b = a * 1.5;
+  ASSERT_EQ(b.value(), 15.0);
+
+  mu::quantity c = 0.5 * a;
+  ASSERT_EQ(c.value(), 5.0);
+}
+
 TEST(MuQuantity, DivideIntApplesByDoubleOranges) {
   mu::quantity<int, apples> a{125};
   mu::quantity<double, oranges> b{10.0};
@@ -127,6 +136,20 @@ TEST(MuQuantity, DivideIntApplesByDoubleOranges) {
       mu::units_equivalent_to<typename decltype(c)::units_type,
                               mu::mult<apples, mu::pow<oranges, -1>>>);
   ASSERT_EQ(c.value(), 12.5);
+}
+
+TEST(MuQuantity, DivideIntApplesByRawInt) {
+  mu::quantity<int, apples> a{12};
+  mu::quantity b_actual = a / 2;
+  mu::quantity<int, apples> b_expected{6};
+  ASSERT_EQ(b_actual, b_expected);
+}
+
+TEST(MuQuantity, DivideRawIntByIntApples) {
+  mu::quantity<int, apples> a{2};
+  mu::quantity b_actual = 10 / a;
+  mu::quantity<int, mu::pow<apples, -1>> b_expected{5};
+  ASSERT_EQ(b_actual, b_expected);
 }
 
 TEST(MuQuantity, CompareEqualApplesToApples) {
