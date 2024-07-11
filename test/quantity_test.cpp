@@ -189,3 +189,19 @@ TEST(MuQuantity, CompareGreaterEqualApplesToApples) {
   ASSERT_GE(a, b);
   ASSERT_GE(a, a);
 }
+
+TEST(MuQuantity, ConstructFromReferences) {
+  auto a = 12 * apples{};
+  auto b = 3 * apples{} * 4;
+  ASSERT_EQ(a, b);
+
+  auto c = a * oranges{};
+  auto d = oranges{} * b;
+  auto e = 12 * (apples{} * oranges{});
+  ASSERT_EQ(c, d);
+  ASSERT_EQ(c, e);
+  ASSERT_EQ(d, e);
+
+  auto f = c / oranges{};
+  ASSERT_EQ(f, a);
+}

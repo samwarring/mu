@@ -12,6 +12,7 @@
 #include <mu/pow.hpp>
 #include <mu/quantity.hpp>
 #include <mu/rep.hpp>
+#include <mu/unit_references.hpp>
 #include <mu/units.hpp>
 #include <mu/units_conversion.hpp>
 #endif
