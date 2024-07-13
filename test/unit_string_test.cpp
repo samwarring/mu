@@ -98,3 +98,14 @@ CONSTEXPR_TEST(MuUnitString, ConstexprUsage) {
   }
   static_assert(make_str() == "a * b^2");
 }
+
+TEST_F(MuUnitString, SuperscriptExponent) {
+  mu::format_options opts;
+  opts.labels = mu::format_options::label_type::symbols;
+  opts.superscript_exponents = true;
+  mu::detail::unit_string ustr2{opts};
+  ustr2.multiply(a);
+  mu::detail::ratio exponent{-12345, 67890};
+  ustr2.pow(exponent);
+  ASSERT_EQ(ustr2.str(), "a⁻¹²³⁴⁵ᐟ⁶⁷⁸⁹⁰");
+}

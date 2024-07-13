@@ -88,14 +88,19 @@ public:
       back().str += opts_.mult_sep;
       back().pow_requires_parens = true;
     }
-    back().str += to_string(constant_value);
+    back().str += to_string(constant_value, false);
     back().ends_with_prefix = false;
   }
 
   /// Raise the entire current subexpression to a rational power.
   ///
   constexpr void pow(ratio exponent) {
-    std::string suffix = "^" + to_string(exponent);
+    std::string suffix;
+    if (opts_.superscript_exponents) {
+      suffix = to_string(exponent, true);
+    } else {
+      suffix = "^" + to_string(exponent, false);
+    }
     if (back().pow_requires_parens) {
       back().str = "(" + back().str + ")" + suffix;
     } else {
@@ -140,33 +145,62 @@ private:
   constexpr subexpression &back() { return subexpression_stack_.back(); }
 
   /// Formats the integer as a string. Note `std::to_string` is not sufficient
-  /// because it is not constexpr.
+  /// because it is not constexpr. If \p superscript is `true`, format digits
+  /// using their superscript versions (assume UTF-8).
   ///
-  constexpr static std::string to_string(std::intmax_t value) {
+  constexpr static std::string to_string(std::intmax_t value,
+                                         bool superscript) {
     std::string ret;
     bool negative = (value < 0);
     if (negative) {
       value *= -1;
     };
     while (value > 0) {
-      ret += ('0' + value % 10);
+      prepend_digit(ret, value % 10, superscript);
       value /= 10;
     };
     if (negative) {
-      ret += '-';
+      ret.insert(0, superscript ? "⁻" : "-");
     }
-    std::reverse(ret.begin(), ret.end());
     return ret;
   }
 
   /// Formats a ratio as a string. If the denominator of the ratio is 1, then
-  /// this only formats the numerator.
+  /// this only formats the numerator. If \p superscript is `true`, format
+  /// digits using their superscript versions (assume UTF-8).
   ///
-  constexpr static std::string to_string(ratio value) {
+  constexpr static std::string to_string(ratio value, bool superscript) {
     if (value.den == 1) {
-      return to_string(value.num);
+      return to_string(value.num, superscript);
     } else {
-      return to_string(value.num) + "/" + to_string(value.den);
+      return to_string(value.num, superscript) + (superscript ? "ᐟ" : "/") +
+             to_string(value.den, superscript);
+    }
+  }
+
+  constexpr static void prepend_digit(std::string &out, int digit,
+                                      bool superscript) {
+    if (superscript) {
+      const char *glyph;
+      switch (digit) {
+        // clang-format off
+      case 0: glyph = "⁰"; break;
+      case 1: glyph = "¹"; break;
+      case 2: glyph = "²"; break;
+      case 3: glyph = "³"; break;
+      case 4: glyph = "⁴"; break;
+      case 5: glyph = "⁵"; break;
+      case 6: glyph = "⁶"; break;
+      case 7: glyph = "⁷"; break;
+      case 8: glyph = "⁸"; break;
+      case 9: glyph = "⁹"; break;
+      default: glyph = "ᵡ"; break;
+        // clang-format on
+      }
+      out.insert(0, glyph);
+
+    } else {
+      out.insert(0, 1, static_cast<char>('0' + digit));
     }
   }
 };

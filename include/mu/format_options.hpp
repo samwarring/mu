@@ -33,6 +33,19 @@ struct format_options {
   /// subtle memory-lifetime bugs.
   ///
   const char *mult_sep = " * ";
+
+  /// Whether exponents are formatted as superscript. Default is `false`.
+  ///
+  /// If `true`, digits of the exponent are formatted as superscript characters.
+  /// The characters are encoded as UTF-8. (For example, `meters²`). Note that
+  /// some UTF-8 characters do not display well in all contexts. Also,
+  /// superscript fractions appear slightly unnatrual (Example: `m¹ᐟ²`). Use at
+  /// your own discresion.
+  ///
+  /// If `false`, exponents are formatted as ASCII digits, joined by the `^`
+  /// character. (For example, `meters^2`).
+  ///
+  bool superscript_exponents = false;
 };
 
 } // namespace mu
