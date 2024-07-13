@@ -50,3 +50,10 @@ TEST_F(MuStreamTest, Reset) {
          << mu::stream::reset << q;
   ASSERT_EQ(stream.str(), "5 🍎 x 🍊 | 5 apples * oranges");
 }
+
+TEST_F(MuStreamTest, SuperscriptExponents) {
+  mu::quantity<int, mu::pow<apples, 2>> q{5};
+  stream << mu::stream::superscript_exponents << q << " | "
+         << mu::stream::ascii_exponents << q;
+  ASSERT_EQ(stream.str(), "5 apples² | 5 apples^2");
+}

@@ -18,6 +18,7 @@ namespace detail {
 struct xalloc_indices {
   int label_type;
   int mult_sep;
+  int superscript_exponents;
 };
 
 /// Returns indices allocated from the "internal extensible array".
@@ -29,9 +30,11 @@ struct xalloc_indices {
 inline xalloc_indices get_xalloc_indices() {
   static int label_type = std::ios::xalloc();
   static int mult_sep = std::ios::xalloc();
+  static int superscript_exponents = std::ios::xalloc();
   xalloc_indices indices;
   indices.label_type = label_type;
   indices.mult_sep = mult_sep;
+  indices.superscript_exponents = superscript_exponents;
   return indices;
 }
 
@@ -54,6 +57,8 @@ inline std::ostream &reset(std::ostream &stream) {
   static format_options default_format;
   stream.iword(indices.label_type) = static_cast<long>(default_format.labels);
   stream.pword(indices.mult_sep) = const_cast<char *>(default_format.mult_sep);
+  stream.iword(indices.superscript_exponents) =
+      static_cast<long>(default_format.superscript_exponents);
   return stream;
 }
 
@@ -78,6 +83,8 @@ public:
     static auto indices = detail::get_xalloc_indices();
     stream.iword(indices.label_type) = static_cast<long>(manip.opts_.labels);
     stream.pword(indices.mult_sep) = const_cast<char *>(manip.opts_.mult_sep);
+    stream.iword(indices.superscript_exponents) =
+        static_cast<long>(manip.opts_.superscript_exponents);
     return stream;
   }
 
@@ -164,6 +171,33 @@ private:
   const char *sep_;
 };
 
+/// Sets unit exponents to be displayed as UTF-8 superscripts.
+///
+/// This is a stream manipulator with no arguments. Clients use this method by
+/// inserting a function pointer into a stream. For example:
+///
+///   `std::cout << mu::stream::superscript_exponents << my_quantity;`
+///
+inline std::ostream &superscript_exponents(std::ostream &stream) {
+  static auto indices = detail::get_xalloc_indices();
+  stream.iword(indices.superscript_exponents) = static_cast<long>(true);
+  return stream;
+}
+
+/// Sets unit exponents to be displayed as ASCII digits, joined to the base with
+/// the `^` character.
+///
+/// This is a stream manipulator with no arguments. Clients use this method by
+/// inserting a function pointer into a stream. For example:
+///
+///   `std::cout << mu::stream::ascii_exponents << my_quantity;`
+///
+inline std::ostream &ascii_exponents(std::ostream &stream) {
+  static auto indices = detail::get_xalloc_indices();
+  stream.iword(indices.superscript_exponents) = static_cast<long>(false);
+  return stream;
+}
+
 } // namespace stream
 
 /// Inserts a formatted quantity into the stream.
@@ -188,11 +222,16 @@ std::ostream &operator<<(std::ostream &stream, const quantity<Rep, Units> &q) {
   format_options opts;
   long iword_label_type = stream.iword(indices.label_type);
   void *pword_mult_sep = stream.pword(indices.mult_sep);
+  long iword_superscript_exponents =
+      stream.iword(indices.superscript_exponents);
   if (iword_label_type) {
     opts.labels = static_cast<format_options::label_type>(iword_label_type);
   }
   if (pword_mult_sep) {
     opts.mult_sep = reinterpret_cast<const char *>(pword_mult_sep);
+  }
+  if (iword_superscript_exponents) {
+    opts.superscript_exponents = true;
   }
   stream << ' ' << to_string<Units>(opts);
 
