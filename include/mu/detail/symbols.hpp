@@ -12,16 +12,35 @@
 
 namespace mu::detail {
 
-/// Concept is `true` if the type defines static members for its name and
-/// symbol.
+/// Concept is `true` if the type defines a `name` member. This is required
+/// for a type to be a named unit.
 template <class T>
-concept has_labels = requires {
+concept has_name = requires {
   { T::name } -> std::convertible_to<const char *>;
+};
+
+/// Concept is `true` if the type defines a `symbol` member. This is recommended
+/// for types that represent named units, but not required.
+template <class T>
+concept has_symbol = requires {
   { T::symbol } -> std::convertible_to<const char *>;
 };
 
+/// Concept is `true` if the type defines an `is_prefix` boolean member. If not
+/// provided, it is assumed the named unit is *not* a prefix. If provided, then
+/// the value of the member determines if the named unit is a prefix.
+///
+/// When a named unit is a prefix, it signals the formatting algorithm *not* to
+/// insert a multiplication separator between it and the immediately following
+/// named unit. Examples of prefixes are: kilo, mega, giga, etc.
+///
+template <class T>
+concept has_prefix = requires {
+  { T::is_prefix } -> std::same_as<const bool &>;
+};
+
 /// Helper class that can format types if they provide label members.
-template <has_labels HasLabels> struct label_formatter {
+template <has_name NamedUnit> struct label_formatter {
 
   /// Multiply the current expression by the named unit. Note that `ustr`
   /// automatically selects the correct label, as it was constructed with the
@@ -29,9 +48,17 @@ template <has_labels HasLabels> struct label_formatter {
   ///
   constexpr static void format(unit_string &ustr) {
     labels ls;
-    ls.name = HasLabels::name;
-    ls.symbol = HasLabels::symbol;
-    ls.is_prefix = false;
+    ls.name = NamedUnit::name;
+    if constexpr (has_symbol<NamedUnit>) {
+      ls.symbol = NamedUnit::symbol;
+    } else {
+      ls.symbol = NamedUnit::name;
+    }
+    if constexpr (has_prefix<NamedUnit>) {
+      ls.is_prefix = NamedUnit::is_prefix;
+    } else {
+      ls.is_prefix = false;
+    }
     ustr.multiply(ls);
   }
 };
@@ -50,7 +77,7 @@ concept has_units = requires { typename T::units; };
 /// are units that are not defined in terms of other units.
 template <class T>
 concept base_unit = requires {
-  requires has_labels<T>;
+  requires has_name<T>;
   requires !has_value<T>;
   requires !has_units<T>;
 };
@@ -80,7 +107,7 @@ struct unit_traits<BaseUnit> : public label_formatter<BaseUnit> {
 /// calculations accurate and precise.
 template <class T>
 concept base_constant = requires {
-  requires has_labels<T>;
+  requires has_name<T>;
   requires has_value<T>;
   requires !has_units<T>;
 };
@@ -107,7 +134,7 @@ struct unit_traits<BaseConstant> : public label_formatter<BaseConstant> {
 /// units.
 template <class T>
 concept composite_unit = requires {
-  requires has_labels<T>;
+  requires has_name<T>;
   requires !has_value<T>;
   requires has_units<T>;
   requires units<typename T::units>;
@@ -126,7 +153,7 @@ struct unit_traits<CompositeUnit> : public label_formatter<CompositeUnit> {
 /// `N • m² / kg²`.
 template <class T>
 concept composite_constant = requires {
-  requires has_labels<T>;
+  requires has_name<T>;
   requires has_value<T>;
   requires has_units<T>;
   requires units<typename T::units>;

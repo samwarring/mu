@@ -130,3 +130,16 @@ CONSTEXPR_TEST(MuUnits, MultUnitsSquared) {
   static_assert(has_format_names<t>(expected_format_names));
   static_assert(has_format_symbols<t>(expected_format_symbols));
 }
+
+CONSTEXPR_TEST(MuUnits, ContainsPrefix) {
+  using t = mu::pow<mu::mult<basket, golden_apples>, 2>;
+  using expected_factors = mu::mult<mu::pow<std::ratio<15>, 2>,
+                                    mu::pow<golden, 2>, mu::pow<apples, 2>>;
+  constexpr static const char *expected_format_names =
+      "basket_of_golden_apples^2";
+  constexpr static const char *expected_format_symbols = "🧺🍏^2";
+  static_assert(units<t>);
+  static_assert(has_factors<t, expected_factors>);
+  static_assert(has_format_names<t>(expected_format_names));
+  static_assert(has_format_symbols<t>(expected_format_symbols));
+}

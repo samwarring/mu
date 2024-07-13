@@ -45,4 +45,11 @@ struct universal_fruit_constant {
   using units = mu::mult<apples, oranges>;
 };
 
+struct basket {
+  constexpr static const char *name = "basket_of_";
+  constexpr static const char *symbol = "🧺";
+  constexpr static bool is_prefix = true;
+  using units = std::ratio<15>;
+};
+
 #endif
