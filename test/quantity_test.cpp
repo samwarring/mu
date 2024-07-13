@@ -1,15 +1,5 @@
 #include "mu_test.hpp"
 
-// TODO: A version of this function should become part of the library, but
-// it will need to handle different formats.
-namespace mu {
-template <rep Rep, units Units>
-std::ostream &operator<<(std::ostream &out, const quantity<Rep, Units> &q) {
-  mu::format_options fopts{};
-  return out << q.value() << ' ' << mu::to_string<Units>(fopts);
-}
-} // namespace mu
-
 TEST(MuQuantity, ConstructIntApplesFromValue) {
   mu::quantity<int, apples> a{5};
   ASSERT_EQ(a.value(), 5);

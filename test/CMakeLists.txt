@@ -12,6 +12,7 @@ add_executable(
   units_conversion_test.cpp
   rep_test.cpp
   quantity_test.cpp
-  unit_string_test.cpp)
+  unit_string_test.cpp
+  stream_test.cpp)
 target_link_libraries(mu_test PRIVATE mu::mu GTest::gtest_main)
 gtest_discover_tests(mu_test)
