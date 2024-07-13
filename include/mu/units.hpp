@@ -1,6 +1,7 @@
 #ifndef INCLUDED_MU_UNITS_HPP
 #define INCLUDED_MU_UNITS_HPP
 #include <mu/detail/factor.hpp>
+#include <mu/detail/unit_string.hpp>
 #include <string>
 #include <tuple>
 #include <type_traits>
@@ -46,24 +47,6 @@ struct is_factor_list<mult<Factors...>> : public std::true_type {};
 template <class T> struct unit_traits {};
 
 } // namespace detail
-
-/// Options specify how units should be displayed when formatted as a string.
-struct format_options {
-
-  /// Allowed options for displaying named units.
-  enum class label_type {
-    /// Display named units using their full names.
-    names,
-    /// Display named units using their symbols.
-    symbols
-  };
-
-  /// Determines how to display named units.
-  label_type labels = label_type::names;
-
-  /// Separator used to diplay units that are multiplied together.
-  const char *mult_sep = " * ";
-};
 
 /// The units concept matches types that can represent units of dimensional
 /// analysis.
