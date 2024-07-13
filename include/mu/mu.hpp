@@ -9,6 +9,7 @@
 #include <mu/detail/std_ratio.hpp>
 #include <mu/detail/symbols.hpp>
 #include <mu/detail/unit_string.hpp>
+#include <mu/format_options.hpp>
 #include <mu/pow.hpp>
 #include <mu/quantity.hpp>
 #include <mu/rep.hpp>

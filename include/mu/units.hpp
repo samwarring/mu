@@ -2,6 +2,7 @@
 #define INCLUDED_MU_UNITS_HPP
 #include <mu/detail/factor.hpp>
 #include <mu/detail/unit_string.hpp>
+#include <mu/format_options.hpp>
 #include <string>
 #include <tuple>
 #include <type_traits>

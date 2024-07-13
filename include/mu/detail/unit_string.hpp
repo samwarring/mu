@@ -2,30 +2,11 @@
 #define INCLUDED_MU_DETAIL_UNIT_STRING_HPP
 #include <cstdint>
 #include <mu/detail/ratio.hpp>
+#include <mu/format_options.hpp>
 #include <string>
 #include <string_view>
 
-namespace mu {
-
-/// Options specify how units should be displayed when formatted as a string.
-struct format_options {
-
-  /// Allowed options for displaying named units.
-  enum class label_type {
-    /// Display named units using their full names.
-    names,
-    /// Display named units using their symbols.
-    symbols
-  };
-
-  /// Determines how to display named units.
-  label_type labels = label_type::names;
-
-  /// Separator used to diplay units that are multiplied together.
-  const char *mult_sep = " * ";
-};
-
-namespace detail {
+namespace mu::detail {
 
 /// Contains all label characteristics of a named unit or constant.
 struct labels {
@@ -190,7 +171,6 @@ private:
   }
 };
 
-} // namespace detail
-} // namespace mu
+} // namespace mu::detail
 
 #endif
