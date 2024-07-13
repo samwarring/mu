@@ -61,7 +61,7 @@ template <class T> struct unit_traits {};
 ///     matches the units concept.
 ///
 template <class T>
-concept units = requires(format_options fopts) {
+concept units = requires(format_options fopts, detail::unit_string &ustr) {
   // Each units type must provide a factorization.
   typename detail::unit_traits<T>::factors;
 
@@ -70,10 +70,25 @@ concept units = requires(format_options fopts) {
   requires detail::is_factor_list<
       typename detail::unit_traits<T>::factors>::value;
 
-  // Each units type must provide a static `format` member that takes a
-  // `format_options` and returns a string.
-  { detail::unit_traits<T>::format(fopts) } -> std::convertible_to<std::string>;
+  // Each units type must provide a static `format` member that appends its
+  // string representation to a `unit_string`. Note the `format` method should
+  // take the `unit_string` as an in-out parameter, but C++ concepts can not
+  // enforce the reference-ness of the parameter.
+  { detail::unit_traits<T>::format(ustr) } -> std::same_as<void>;
 };
+
+/// Format the units according to the provided format options.
+///
+/// \tparam Units The units, or units expression, to be formatted.
+/// \param opts Structure of values that customize how the units are formatted.
+/// \return The formatted units as a `std::string`.
+///
+template <units Units>
+constexpr std::string to_string(const format_options &opts) {
+  detail::unit_string ustr{opts};
+  detail::unit_traits<Units>::format(ustr);
+  return ustr.str();
+}
 
 namespace detail {
 
@@ -83,8 +98,8 @@ template <> struct unit_traits<mult<>> {
   /// Empty product has no factors.
   using factors = mult<>;
 
-  /// Formatting an empty product displays "1".
-  constexpr static std::string format(const format_options &) { return "1"; }
+  /// Does not modify the `unit_string`.
+  constexpr static void format(unit_string &) {}
 };
 
 /// Unit traits for a non-empty product expression.
@@ -100,21 +115,12 @@ struct unit_traits<mult<UnitsHead, UnitsTail...>> {
   using factors = mult_concat_t<typename unit_traits<UnitsHead>::factors,
                                 typename unit_traits<UnitsTail>::factors...>;
 
-  /// Formatting a product expression displays each unit in the expression,
-  /// joined by `format_options::mult_sep`. If the product contains more than
-  /// one unit, the entire string is enclosed in parentheses.
-  constexpr static std::string format(const format_options &opts) {
-    std::string ret;
-    constexpr bool enclose = sizeof...(UnitsTail) > 0;
-    if constexpr (enclose) {
-      ret += "(";
-    }
-    ret += unit_traits<UnitsHead>::format(opts);
-    ret += ((opts.mult_sep + unit_traits<UnitsTail>::format(opts)) + ...);
-    if constexpr (enclose) {
-      ret += ")";
-    }
-    return ret;
+  /// Creates a new subexpression consisting of every term in the product.
+  constexpr static void format(unit_string &ustr) {
+    ustr.push();
+    unit_traits<UnitsHead>::format(ustr);
+    (unit_traits<UnitsTail>::format(ustr), ...);
+    ustr.pop();
   }
 };
 

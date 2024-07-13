@@ -1,7 +1,8 @@
 #ifndef INCLUDED_MU_DETAIL_STD_RATIO_HPP
 #define INCLUDED_MU_DETAIL_STD_RATIO_HPP
 #include <mu/detail/factor.hpp>
-#include <mu/detail/to_string.hpp>
+#include <mu/detail/ratio.hpp>
+#include <mu/detail/unit_string.hpp>
 #include <mu/units.hpp>
 #include <ratio>
 
@@ -33,10 +34,9 @@ struct unit_traits<std::ratio<Num, Den>> {
   /// The factors of a ratio include itself.
   using factors = mu::mult<std::ratio<Num, Den>>;
 
-  /// If the ratio's denominator is 1, only display the numerator. Otherwise,
-  /// display the numerator and denominator enclosed in parentheses.
-  constexpr static std::string format(const format_options &) {
-    return to_string(Num, Den);
+  /// Multiply the current expression by the ratio.
+  constexpr static void format(unit_string &ustr) {
+    ustr.multiply(ratio{Num, Den});
   }
 };
 

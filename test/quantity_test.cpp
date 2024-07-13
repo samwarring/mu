@@ -6,7 +6,7 @@ namespace mu {
 template <rep Rep, units Units>
 std::ostream &operator<<(std::ostream &out, const quantity<Rep, Units> &q) {
   mu::format_options fopts{};
-  return out << q.value() << ' ' << detail::unit_traits<Units>::format(fopts);
+  return out << q.value() << ' ' << mu::to_string<Units>(fopts);
 }
 } // namespace mu
 

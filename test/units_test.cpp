@@ -13,7 +13,7 @@ constexpr bool has_format_names(std::string expected_format) {
   mu::format_options fopts;
   fopts.labels = mu::format_options::label_type::names;
   fopts.mult_sep = " * ";
-  std::string formatted = unit_traits<T>::format(fopts);
+  std::string formatted = mu::to_string<T>(fopts);
   return formatted == expected_format;
 }
 
@@ -22,15 +22,15 @@ constexpr bool has_format_symbols(std::string expected_format) {
   mu::format_options fopts;
   fopts.labels = mu::format_options::label_type::symbols;
   fopts.mult_sep = " * ";
-  std::string formatted = unit_traits<T>::format(fopts);
+  std::string formatted = mu::to_string<T>(fopts);
   return formatted == expected_format;
 }
 
 CONSTEXPR_TEST(MuUnits, StdRatio) {
   using t = std::ratio<2, 3>;
   using expected_factors = mu::mult<std::ratio<2, 3>>;
-  constexpr static const char *expected_format_names = "(2/3)";
-  constexpr static const char *expected_format_symbols = "(2/3)";
+  constexpr static const char *expected_format_names = "2/3";
+  constexpr static const char *expected_format_symbols = "2/3";
   static_assert(units<t>);
   static_assert(has_factors<t, expected_factors>);
   static_assert(has_format_names<t>(expected_format_names));
@@ -112,8 +112,8 @@ CONSTEXPR_TEST(MuUnits, CompositeConstantSquared) {
 CONSTEXPR_TEST(MuUnits, MultUnits) {
   using t = mu::mult<golden, oranges>;
   using expected_factors = mu::mult<golden, oranges>;
-  constexpr static const char *expected_format_names = "(golden * oranges)";
-  constexpr static const char *expected_format_symbols = "(φ * 🍊)";
+  constexpr static const char *expected_format_names = "golden * oranges";
+  constexpr static const char *expected_format_symbols = "φ * 🍊";
   static_assert(units<t>);
   static_assert(has_factors<t, expected_factors>);
   static_assert(has_format_names<t>(expected_format_names));

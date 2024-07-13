@@ -22,15 +22,17 @@ concept has_labels = requires {
 
 /// Helper class that can format types if they provide label members.
 template <has_labels HasLabels> struct label_formatter {
-  constexpr static std::string format(const format_options opts) {
-    switch (opts.labels) {
-    case format_options::label_type::names:
-      return HasLabels::name;
-    case format_options::label_type::symbols:
-      return HasLabels::symbol;
-    default:
-      return HasLabels::name;
-    }
+
+  /// Multiply the current expression by the named unit. Note that `ustr`
+  /// automatically selects the correct label, as it was constructed with the
+  /// desired `format_options`.
+  ///
+  constexpr static void format(unit_string &ustr) {
+    labels ls;
+    ls.name = HasLabels::name;
+    ls.symbol = HasLabels::symbol;
+    ls.is_prefix = false;
+    ustr.multiply(ls);
   }
 };
 
@@ -153,9 +155,21 @@ struct factor_traits<composite_constant_value<CompositeConstant>> {
 template <composite_constant CompositeConstant>
 struct unit_traits<composite_constant_value<CompositeConstant>> {
   using factors = mult<composite_constant_value<CompositeConstant>>;
-  constexpr static std::string format(const format_options &opts) {
-    // NOTE: We expect this method will never be called in practice.
-    return "|" + label_formatter<CompositeConstant>::format(opts) + "|";
+
+  /// Format the value using the named constant's labels, but surround the label
+  /// with `|` characters to signify this only represents the label's magintude.
+  ///
+  /// We expect this function to never be called! But it must be included for
+  /// the `composite_constant_value<T>` to satisfy the `units` concept.
+  ///
+  constexpr static void format(unit_string &ustr) {
+    std::string name = "|" + CompositeConstant::name + "|";
+    std::string symbol = "|" + CompositeConstant::symbol + "|";
+    labels ls;
+    ls.name = name.c_str();
+    ls.symbol = symbol.c_str();
+    ls.is_prefix = false;
+    ustr.multiply(ls);
   }
 };
 

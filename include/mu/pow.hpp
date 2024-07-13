@@ -2,7 +2,7 @@
 #define INCLUDED_MU_POW_HPP
 #include <mu/detail/factor.hpp>
 #include <mu/detail/ratio.hpp>
-#include <mu/detail/to_string.hpp>
+#include <mu/detail/unit_string.hpp>
 #include <mu/units.hpp>
 
 namespace mu {
@@ -63,12 +63,12 @@ struct unit_traits<pow<UnitsBase, ExpNum, ExpDen>> {
   using factors = typename apply_pow<typename unit_traits<UnitsBase>::factors,
                                      ExpNum, ExpDen>::type;
 
-  /// To display a pow, the formatted base is appended with "^" followed by the
-  /// rational exponent.
-  constexpr static std::string format(const format_options &opts) {
-    std::string ret = unit_traits<UnitsBase>::format(opts);
-    ret += "^" + to_string(ExpNum, ExpDen);
-    return ret;
+  /// Push a new subexpression containing the formatted base raised to a power.
+  constexpr static void format(unit_string &ustr) {
+    ustr.push();
+    unit_traits<UnitsBase>::format(ustr);
+    ustr.pow(ratio{ExpNum, ExpDen});
+    ustr.pop();
   }
 };
 
