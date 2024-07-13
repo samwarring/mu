@@ -1,12 +1,12 @@
 #include "mu_test.hpp"
 
 namespace /* local to this file only */ {
-constexpr mu::labels a{"unita", "a", false};
-constexpr mu::labels b{"unitb", "b", false};
-constexpr mu::labels c{"unitc", "c", false};
-constexpr mu::labels d{"unitd", "d", false};
-constexpr mu::labels m{"meters", "m", false};
-constexpr mu::labels k{"kilo", "k", true};
+constexpr mu::detail::labels a{"unita", "a", false};
+constexpr mu::detail::labels b{"unitb", "b", false};
+constexpr mu::detail::labels c{"unitc", "c", false};
+constexpr mu::detail::labels d{"unitd", "d", false};
+constexpr mu::detail::labels m{"meters", "m", false};
+constexpr mu::detail::labels k{"kilo", "k", true};
 
 constexpr auto label_type = mu::format_options::label_type::symbols;
 constexpr mu::format_options fopts{label_type, " * "};
