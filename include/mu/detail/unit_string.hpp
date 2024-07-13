@@ -2,7 +2,6 @@
 #define INCLUDED_MU_DETAIL_UNIT_STRING_HPP
 #include <cstdint>
 #include <mu/detail/ratio.hpp>
-#include <mu/detail/to_string.hpp>
 #include <string>
 #include <string_view>
 

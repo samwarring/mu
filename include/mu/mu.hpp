@@ -8,7 +8,6 @@
 #include <mu/detail/ratio.hpp>
 #include <mu/detail/std_ratio.hpp>
 #include <mu/detail/symbols.hpp>
-#include <mu/detail/to_string.hpp>
 #include <mu/detail/unit_string.hpp>
 #include <mu/pow.hpp>
 #include <mu/quantity.hpp>
