@@ -80,8 +80,17 @@ template <units FromUnits, units ToUnits> struct analysis {
         // Found a combined *irrational* factor with a non-zero exponent. This
         // guarantees that FromUnits cannot be converted to ToUnits without
         // multiplying by some floating point conversion value.
-        float_conversion *=
+        auto [valid, result] =
             compute_rational_pow(f.irrational_value, f.exponent);
+        if (valid) {
+          float_conversion *= result;
+        } else {
+          // Rational power is undefined.
+          is_convertible = false;
+          is_equivalent = false;
+          is_int_convertible = false;
+          return;
+        }
       } else {
         // Found a *rational* factor. Break it into prime factors.
         prime_factorize(prime_factors, f.rational_value, f.exponent);
@@ -98,8 +107,17 @@ template <units FromUnits, units ToUnits> struct analysis {
             compute_whole_pow(f.base, f.exponent.num / f.exponent.den);
       } else {
         // This factor requires float conversion.
-        float_conversion *=
+        auto [valid, result] =
             compute_rational_pow(static_cast<long double>(f.base), f.exponent);
+        if (valid) {
+          float_conversion *= result;
+        } else {
+          // Rational power is undefined.
+          is_convertible = false;
+          is_equivalent = false;
+          is_int_convertible = false;
+          return;
+        }
       }
     }
 

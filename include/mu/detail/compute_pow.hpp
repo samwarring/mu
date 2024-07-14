@@ -53,7 +53,7 @@ constexpr long double compute_nth_root(long double base, std::intmax_t n) {
 
   long double prev_guess = 0.0;
   long double guess = 0.0;
-  long double next_guess = 1.0;
+  long double next_guess = base < 0 ? -1.0 : 1.0;
   long double n_f = static_cast<long double>(n);
 
   while (guess != next_guess && prev_guess != next_guess) {
@@ -64,26 +64,37 @@ constexpr long double compute_nth_root(long double base, std::intmax_t n) {
     next_guess = guess - ((guess_pow_n - base) / (n_f * guess_pow_n_1));
   }
 
-  return static_cast<double>(guess);
+  return guess;
 }
 
-/// Computes xʳ where r is a ratio.
+/// Computes xᴿ where R is a ratio.
 ///
-/// \param base The base of the exponent. Must be non-negative.
+/// The ratio is simplified before performing any exponentiation or nth roots.
+/// This means an input of `(-n)²ᐟ⁴` is invalid, as the input can be simplified
+/// as `(-n)¹ᐟ²` which is an even root of a negative number.
+///
+/// \param base The base of the exponent. May be positive or negative.
 /// \param exponent The rational exponent value. The exponent is allowed to be
-/// positive or negative.
+/// positive or negative, but the denominator must not be 0.
+/// \return A pair of values: (1) A `bool` that is true if the result is valid;
+/// (2) A `long double` containing the result if it is valid, or an unspecified
+/// value if it is invalid.
 ///
-constexpr long double compute_rational_pow(long double base, ratio exponent) {
+constexpr std::pair<bool, long double> compute_rational_pow(long double base,
+                                                            ratio exponent) {
 
   // Handle exponent == 0.
   if (exponent.is_zero()) {
-    return 1.0;
+    return {true, 1};
   }
 
   // Handle negative exponents.
   if (exponent.is_negative()) {
-    long double inverse = compute_rational_pow(base, -exponent);
-    return 1.0 / inverse;
+    auto [real, inverse] = compute_rational_pow(base, -exponent);
+    if (!real || inverse == 0) {
+      return {false, 0};
+    }
+    return {true, 1.0 / inverse};
   }
 
   // Exponent is positive, but make sure num and den are positive numbers.
@@ -98,6 +109,12 @@ constexpr long double compute_rational_pow(long double base, ratio exponent) {
   ratio exponent_fraction{exponent.num % exponent.den, exponent.den};
   exponent_fraction.simplify();
 
+  if (base < 0 && exponent_fraction.den % 2 == 0) {
+    // Attempting an even root of a negative number. Answer is an imaginary
+    // number, which is not supported!
+    return {false, 0};
+  }
+
   // Compute the whole exponent portion.
   long double result_whole = compute_whole_pow(base, exponent_whole);
 
@@ -108,7 +125,7 @@ constexpr long double compute_rational_pow(long double base, ratio exponent) {
 
   // Final result!
   long double result = result_whole * result_fractional;
-  return result;
+  return {true, result};
 }
 
 } // namespace mu::detail

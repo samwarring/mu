@@ -52,4 +52,10 @@ struct basket {
   using units = std::ratio<15>;
 };
 
+struct funky {
+  constexpr static const char *name = "funky";
+  constexpr static const char *symbol = "🤯";
+  constexpr static long double value = -1.2345; // ALERT: Negative value!
+};
+
 #endif

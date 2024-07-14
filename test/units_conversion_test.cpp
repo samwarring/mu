@@ -57,3 +57,20 @@ CONSTEXPR_TEST(MuConversion, SqFeetToSqMeters) {
   static_assert(!units_equivalent_to<from, to>);
   static_assert(is_equal(units_conversion_v<from, to>, expected_conversion));
 }
+
+CONSTEXPR_TEST(MuConversion, NegativeScale) {
+  // Can be scaled by negative value.
+  using funky_apples = mu::mult<funky, apples>; // -1.234 apples
+  static_assert(units_convertible_to<apples, funky_apples>);
+
+  // Cannot be converted, requires even root of negative value.
+  using sqrt_apples = mu::pow<apples, 1, 2>;
+  using sqrt_funky_apples = mu::pow<funky_apples, 1, 2>;
+  static_assert(!units_convertible_to<sqrt_apples, sqrt_funky_apples>);
+
+  // Can be converted, requires odd root of negative value, which is ok.
+  using cbrt_apples = mu::pow<apples, 1, 3>;
+  using cbrt_funky_apples = mu::pow<funky_apples, 1, 3>;
+  static_assert(units_convertible_to<cbrt_apples, cbrt_funky_apples>);
+  static_assert(units_conversion_v<cbrt_apples, cbrt_funky_apples> < 0);
+}
