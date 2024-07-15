@@ -39,20 +39,35 @@ CONSTEXPR_TEST(MuConversion, EmptyToHalf) {
   static_assert(units_conversion_v<from, to> == expected_conversion);
 }
 
-CONSTEXPR_TEST(MuConversion, SqFeetToSqMeters) {
-  struct test_feet {
-    constexpr static const char *name = "feet";
-    constexpr static const char *symbol = "ft";
-  };
-  struct test_meters {
-    constexpr static const char *name = "meters";
-    constexpr static const char *symbol = "m";
-    constexpr static long double value = 3.28084;
-    using units = test_feet;
-  };
+namespace /* local to this file only */ {
+struct test_feet {
+  constexpr static const char *name = "feet";
+  constexpr static const char *symbol = "ft";
+};
+struct test_meters {
+  constexpr static const char *name = "meters";
+  constexpr static const char *symbol = "m";
+  constexpr static long double value = 3.280839895; // feet
+  using units = test_feet;
+};
+} // namespace
+
+TEST(MuConversion, SqFeetToSqMeters) {
   using from = mu::pow<test_feet, 2>;
   using to = mu::pow<test_meters, 2>;
-  constexpr long double expected_conversion = 0.092903;
+  mu::detail::analysis<from, to> a;
+  constexpr long double expected_conversion =
+      0.0929030400007432243200044593459200237831782401189158912005707962;
+  ASSERT_TRUE((units_convertible_to<from, to>));
+  ASSERT_FALSE((units_equivalent_to<from, to>));
+  ASSERT_TRUE((is_equal(units_conversion_v<from, to>, expected_conversion)));
+}
+
+CONSTEXPR_TEST(MuConversion, SqFeetToSqMeters) {
+  using from = mu::pow<test_feet, 2>;
+  using to = mu::pow<test_meters, 2>;
+  constexpr long double expected_conversion =
+      0.0929030400007432243200044593459200237831782401189158912005707962;
   static_assert(units_convertible_to<from, to>);
   static_assert(!units_equivalent_to<from, to>);
   static_assert(is_equal(units_conversion_v<from, to>, expected_conversion));

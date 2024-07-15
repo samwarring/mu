@@ -12,7 +12,7 @@
 constexpr bool is_equal(long double a, long double b) {
   long double delta = a - b;
   delta = delta < 0 ? -delta : delta;
-  long double tolerance = std::numeric_limits<long double>::max() * 2;
+  const long double tolerance = std::numeric_limits<double>::epsilon();
   return delta < tolerance;
 }
 

@@ -26,7 +26,7 @@ struct ratio {
   constexpr ratio() = default;
 
   /// Copy constructor.
-  constexpr ratio(const ratio &rhs) : num(rhs.num), den(rhs.den) {}
+  constexpr ratio(const ratio &rhs) = default;
 
   /// Construct as a whole number.
   constexpr ratio(std::intmax_t numerator) : num(numerator), den(1) {}
@@ -46,6 +46,9 @@ struct ratio {
 
   /// Returns true if the ratio is a negative value.
   constexpr bool is_negative() const { return (num < 0) ^ (den < 0); }
+
+  // Copy-assignment
+  constexpr ratio &operator=(const ratio &) = default;
 
   /// Returns negative copy of this ratio.
   constexpr ratio operator-() const { return ratio(-num, den); }

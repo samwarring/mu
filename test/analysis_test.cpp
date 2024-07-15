@@ -41,6 +41,16 @@ TEST(MuAnalysis, ApplesPerApplesToRatio) {
   ASSERT_EQ(a.int_conversion, 1);
 }
 
+TEST(MuAnalysis, ApplesToDozenApples) {
+  using from = apples;
+  using to = mu::mult<std::ratio<12>, apples>;
+  analysis<from, to> a;
+  ASSERT_TRUE(a.is_convertible);
+  ASSERT_TRUE(!a.is_equivalent);
+  ASSERT_TRUE(!a.is_int_convertible);
+  ASSERT_EQ((double)a.float_conversion, 1.0 / 12.0);
+}
+
 CONSTEXPR_TEST(MuAnalysis, ApplesToHalfApples) {
   using from = apples;
   using to = mu::mult<std::ratio<1, 2>, apples>;
@@ -58,5 +68,5 @@ CONSTEXPR_TEST(MuAnalysis, ApplesToDozenApples) {
   static_assert(!analysis_object<from, to>.is_int_convertible);
   static_assert(!analysis_object<from, to>.is_int_convertible);
   static_assert(
-      is_equal(analysis_object<from, to>.float_conversion, 1.0 / 12.0));
+      is_equal(analysis_object<from, to>.float_conversion, 1.0l / 12.0l));
 }

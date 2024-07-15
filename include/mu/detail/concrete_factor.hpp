@@ -42,26 +42,6 @@ template <class FactorList> class concrete_factor_generator {};
 
 /// The only supported specialization of concrete_factor_generator.
 template <factor... Factors> class concrete_factor_generator<mult<Factors...>> {
-public:
-  /// Unique value that identifies a factor's base type.
-  ///
-  /// \tparam FactorBase The *base* type of a factor, not the factor type
-  /// itself. If the type is not a base of any factor in `Factors...`, then the
-  /// value is `UNKNOWN_BASE_ID`.
-  ///
-  template <class FactorBase>
-  constexpr static concrete_factor_base_id base_id = get_base_id<FactorBase>();
-
-  /// The maximum id assigned by this generator.
-  constexpr static concrete_factor_base_id max_id = sizeof...(Factors);
-
-  /// Produces an array of concrete factors for each `Factor` in the `mult`
-  /// expression.
-  constexpr static std::array<concrete_factor, sizeof...(Factors)>
-  make_concrete_factors() {
-    return {make_concrete_factor<Factors>()...};
-  }
-
 private:
   /// Compute the base id for a base type by locating the first index of
   /// `Factors...` whose base is the requested type.
@@ -93,6 +73,26 @@ private:
     f.rational_value = factor_traits<Factor>::rational_value;
     f.irrational_value = factor_traits<Factor>::irrational_value;
     return f;
+  }
+
+public:
+  /// Unique value that identifies a factor's base type.
+  ///
+  /// \tparam FactorBase The *base* type of a factor, not the factor type
+  /// itself. If the type is not a base of any factor in `Factors...`, then the
+  /// value is `UNKNOWN_BASE_ID`.
+  ///
+  template <class FactorBase>
+  constexpr static concrete_factor_base_id base_id = get_base_id<FactorBase>();
+
+  /// The maximum id assigned by this generator.
+  constexpr static concrete_factor_base_id max_id = sizeof...(Factors);
+
+  /// Produces an array of concrete factors for each `Factor` in the `mult`
+  /// expression.
+  constexpr static std::array<concrete_factor, sizeof...(Factors)>
+  make_concrete_factors() {
+    return {make_concrete_factor<Factors>()...};
   }
 };
 

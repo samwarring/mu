@@ -277,7 +277,7 @@ public:
   /// \tparam FromUnits Units of the source quantity.
   ///
   template <rep FromRep, units FromUnits>
-  requires(!units_convertible_to<FromUnits, ToUnits>)
+  requires(!units_convertible_to<FromUnits, Units>)
   constexpr quantity(const quantity<FromRep, FromUnits> &) = delete;
 
   /// Move-constructs this quantity from another quantity with compatible units.
@@ -315,7 +315,7 @@ public:
   /// \tparam FromUnits Units of the source quantity.
   ///
   template <rep FromRep, units FromUnits>
-  requires(!units_convertible_to<FromUnits, ToUnits>)
+  requires(!units_convertible_to<FromUnits, Units>)
   constexpr quantity(quantity<FromRep, FromUnits> &&) = delete;
 
   /// Copy-assignment from another quantity.
@@ -358,7 +358,7 @@ public:
   /// \tparam FromUnits Units of the source quantity.
   ///
   template <rep FromRep, units FromUnits>
-  requires(!units_convertible_to<FromUnits, ToUnits>)
+  requires(!units_convertible_to<FromUnits, Units>)
   constexpr quantity<Rep, Units> &
   operator=(const quantity<FromRep, FromUnits> &) = delete;
 
@@ -402,7 +402,7 @@ public:
   /// \tparam FromUnits Units of the source quantity.
   ///
   template <rep FromRep, units FromUnits>
-  requires(!units_convertible_to<FromUnits, ToUnits>)
+  requires(!units_convertible_to<FromUnits, Units>)
   constexpr quantity<Rep, Units> &
   operator=(quantity<FromRep, FromUnits> &&) = delete;
 
