@@ -11,7 +11,8 @@
                 "mu_ENABLE_TEST": "ON",
                 "CMAKE_C_FLAGS": "$env{MY_C_FLAGS} $env{MY_C_FLAGS_COVERAGE} $env{MY_C_FLAGS_SANITIZER}",
                 "CMAKE_CXX_FLAGS": "$env{MY_CXX_FLAGS} $env{MY_CXX_FLAGS_COVERAGE} $env{MY_CXX_FLAGS_SANITIZER}",
-                "CMAKE_INSTALL_PREFIX": "build/${presetName}/installed"
+                "CMAKE_INSTALL_PREFIX": "build/${presetName}/installed",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
             }
         },
         {
