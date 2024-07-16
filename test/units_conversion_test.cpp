@@ -55,7 +55,6 @@ struct test_meters {
 TEST(MuConversion, SqFeetToSqMeters) {
   using from = mu::pow<test_feet, 2>;
   using to = mu::pow<test_meters, 2>;
-  mu::detail::analysis<from, to> a;
   constexpr long double expected_conversion =
       0.0929030400007432243200044593459200237831782401189158912005707962;
   ASSERT_TRUE((units_convertible_to<from, to>));
