@@ -5,10 +5,11 @@ on:
 jobs:
   build:
     strategy:
+      fail-fast: false
       matrix:
         variant:
           - name: Linux Debug
-            os: ubuntu-latest
+            os: ubuntu-24.04
             preset: gcc-sanitized
           - name: Windows Debug
             os: windows-latest
@@ -35,6 +36,14 @@ jobs:
       - name: Setup Visual Studio environment
         if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+
+      - name: Set VCPKG_ROOT variable
+        run: echo "VCPKG_ROOT=${{ github.workspace}}/vcpkg" >> "$GITHUB_ENV"
 
       - name: Configure
         run: cmake --preset ${{ matrix.variant.preset }}
