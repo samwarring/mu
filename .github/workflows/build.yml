@@ -19,31 +19,25 @@ jobs:
             preset: clang-sanitized
     name: ${{ matrix.variant.name }}
     runs-on: ${{ matrix.variant.os }}
+    env:
+      VCPKG_ROOT: '${{ github.workspace }}/vcpkg'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      - name: Install required tools (apt)
-        if: runner.os == 'Linux'
-        run: scripts/install_tools_apt.sh
-
-      - name: Install required tools (brew)
-        if: runner.os == 'MacOS'
-        run: scripts/install_tools_brew.sh
+      - name: Install CMake
+        uses: lukka/get-cmake@v3
       
-      - name: Setup Visual Studio environment
-        if: runner.os == 'Windows'
-        uses: ilammy/msvc-dev-cmd@v1
-
       - name: Install vcpkg
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
 
-      - name: Set VCPKG_ROOT variable
-        run: echo "VCPKG_ROOT=${{ github.workspace}}/vcpkg" >> "$GITHUB_ENV"
+      - name: Setup Visual Studio environment
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
 
       - name: Configure
         run: cmake --preset ${{ matrix.variant.preset }}
