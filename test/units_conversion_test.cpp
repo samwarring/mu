@@ -42,11 +42,11 @@ CONSTEXPR_TEST(MuConversion, EmptyToHalf) {
 namespace /* local to this file only */ {
 struct test_feet {
   constexpr static const char *name = "feet";
-  constexpr static const char *symbol = "ft";
+  [[maybe_unused]] constexpr static const char *symbol = "ft";
 };
 struct test_meters {
   constexpr static const char *name = "meters";
-  constexpr static const char *symbol = "m";
+  [[maybe_unused]] constexpr static const char *symbol = "m";
   constexpr static long double value = 3.280839895; // feet
   using units = test_feet;
 };
