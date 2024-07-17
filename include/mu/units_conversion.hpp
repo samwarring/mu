@@ -21,12 +21,16 @@ template <units FromUnits, units ToUnits> struct units_conversion {
 private:
   constexpr static auto &ao = analysis_object<FromUnits, ToUnits>;
   constexpr static bool fits_int8 =
+      ao.int_conversion >= std::numeric_limits<int8_t>::min() &&
       ao.int_conversion <= std::numeric_limits<int8_t>::max();
   constexpr static bool fits_int16 =
+      ao.int_conversion >= std::numeric_limits<int16_t>::min() &&
       ao.int_conversion <= std::numeric_limits<int16_t>::max();
   constexpr static bool fits_int32 =
+      ao.int_conversion >= std::numeric_limits<int32_t>::min() &&
       ao.int_conversion <= std::numeric_limits<int32_t>::max();
   constexpr static bool fits_int64 =
+      ao.int_conversion >= std::numeric_limits<int64_t>::min() &&
       ao.int_conversion <= std::numeric_limits<int64_t>::max();
 
 public:
