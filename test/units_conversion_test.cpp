@@ -72,7 +72,7 @@ CONSTEXPR_TEST(MuConversion, SqFeetToSqMeters) {
   static_assert(is_equal(units_conversion_v<from, to>, expected_conversion));
 }
 
-CONSTEXPR_TEST(MuConversion, NegativeScale) {
+CONSTEXPR_TEST(MuConversion, NegativeIrrationalScale) {
   // Can be scaled by negative value.
   using funky_apples = mu::mult<funky, apples>; // -1.234 apples
   static_assert(units_convertible_to<apples, funky_apples>);

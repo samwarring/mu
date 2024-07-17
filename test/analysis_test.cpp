@@ -70,3 +70,53 @@ CONSTEXPR_TEST(MuAnalysis, ApplesToDozenApples) {
   static_assert(
       is_equal(analysis_object<from, to>.float_conversion, 1.0l / 12.0l));
 }
+
+TEST(MuAnalysis, NegativeIntegerScale) {
+  using n8_oranges = mu::mult<std::ratio<-8>, oranges>;
+  using sqrt_oranges = mu::pow<oranges, 1, 2>;
+  using sqrt_n8_oranges = mu::pow<n8_oranges, 1, 2>;
+  using cbrt_oranges = mu::pow<oranges, 1, 3>;
+  using cbrt_n8_oranges = mu::pow<n8_oranges, 1, 3>;
+  {
+    analysis<n8_oranges, oranges> a;
+    ASSERT_TRUE(a.is_convertible);
+    ASSERT_FALSE(a.is_equivalent);
+    ASSERT_TRUE(a.is_int_convertible);
+    ASSERT_EQ(a.int_conversion, -8);
+  }
+  {
+    analysis<oranges, n8_oranges> a;
+    ASSERT_TRUE(a.is_convertible);
+    ASSERT_FALSE(a.is_equivalent);
+    ASSERT_FALSE(a.is_int_convertible);
+    ASSERT_EQ(a.float_conversion, (long double)(-1) / 8);
+  }
+  {
+    // sqrt of negative number. Not convertible.
+    analysis<sqrt_oranges, sqrt_n8_oranges> a;
+    ASSERT_FALSE(a.is_convertible);
+    ASSERT_FALSE(a.is_equivalent);
+  }
+  {
+    // sqrt of negative number. Not convertible.
+    analysis<sqrt_n8_oranges, sqrt_oranges> a;
+    ASSERT_FALSE(a.is_convertible);
+    ASSERT_FALSE(a.is_equivalent);
+  }
+  {
+    // cube root of -8 is -2. This is int convertible.
+    analysis<cbrt_n8_oranges, cbrt_oranges> a;
+    ASSERT_TRUE(a.is_convertible);
+    ASSERT_FALSE(a.is_equivalent);
+    ASSERT_TRUE(a.is_int_convertible);
+    ASSERT_EQ(a.int_conversion, -2);
+  }
+  {
+    // cube root of -8 is -2. This is int convertible.
+    analysis<cbrt_oranges, cbrt_n8_oranges> a;
+    ASSERT_TRUE(a.is_convertible);
+    ASSERT_FALSE(a.is_equivalent);
+    ASSERT_FALSE(a.is_int_convertible);
+    ASSERT_EQ(a.float_conversion, (long double)-0.5);
+  }
+}

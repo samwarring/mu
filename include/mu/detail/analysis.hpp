@@ -100,8 +100,25 @@ template <units FromUnits, units ToUnits> struct analysis {
     // Combine prime factors, and calculate their contribution to the unit
     // conversion value.
     combine_prime_factors(prime_factors);
-    for (const auto &f : prime_factors) {
-      if (!f.exponent.is_negative() && f.exponent.is_whole()) {
+    for (auto &f : prime_factors) {
+      if (f.base == -1) {
+        // The conversion included a factor whose base is a negative ratio.
+        // Ultimately, conversion could be positive, negative, or undefined.
+        f.exponent.simplify();
+        if (f.exponent.den % 2 == 0) {
+          // Even root of a negative number is undefined.
+          is_convertible = false;
+          is_equivalent = false;
+          is_int_convertible = false;
+          return;
+        }
+        bool abs_exponent_num =
+            f.exponent.num < 0 ? -f.exponent.num : f.exponent.num;
+        if (abs_exponent_num % 2 == 1) {
+          // -1 raised to an odd exponent is negative.
+          int_conversion *= -1;
+        }
+      } else if (!f.exponent.is_negative() && f.exponent.is_whole()) {
         // This factor only requires int conversion.
         int_conversion *=
             compute_whole_pow(f.base, f.exponent.num / f.exponent.den);
