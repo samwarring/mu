@@ -80,6 +80,12 @@ constexpr void try_prime_factor(std::vector<prime_factor> &out,
 /// vector. This effectively prime-factorizes `value`, and raises each prime
 /// factor by the provided exponent.
 ///
+/// \param out Push prime_factors into this vector
+/// \param value The value to factorize. Must be greater than 0.
+/// \param exponent The value is already rasied to this exponent. The value will
+/// be factored independently, then this exponent will be applied to all the
+/// prime factors.
+///
 constexpr void prime_factorize_whole_number(std::vector<prime_factor> &out,
                                             std::intmax_t &value,
                                             ratio exponent) {
@@ -113,25 +119,36 @@ constexpr void prime_factorize_whole_number(std::vector<prime_factor> &out,
 /// of base's denominator. No effort is made to simplify the resulting factors
 /// (e.g. by combining factors with the same base).
 ///
+/// If `base` is a negative value, then this method pushes a factor of
+/// `-1^exponent` followed by the factorization of `|base|`.
+///
 /// The prime-factorization algorithm does NOT calculate prime numbers, but
 /// instead sources candidate primes from the `PRIMES_TABLE` earlier in this
 /// file. If an input is the product of primes not found in that table, then
 /// those primes will NOT appear in the factorization.
 ///
 /// This function assumes as preconditions:
-///   1. base is a non-negative value
+///   1. base is nonzero
 ///   2. base's denominator is nonzero
 ///   3. exponent's denominator is nonzero
 ///
-/// An example, consider: prime_factorize(out, ratio{49, 36}, ratio{2, 3}).
+/// An example, consider: prime_factorize(out, ratio{49, -36}, ratio{2, 3}).
+///   - Base is a negative number. Include factor -1^2/3
 ///   - The prime factors of 49 = 2^1 * 7^2
 ///   - The prime factors of 36 = 2^2 * 3^2
 ///   - The prime factors of 1/36 = 2^-2 * 3^-2
 ///   - The exponent is distributed across all factors of the base.
-///   - The resulting factors, in order, are: {2*2/3, 7^4/3, 2^-4/3, 3^-4/3}.
+///   - The resulting factors, in order, are:
+///     {-1^2/3, 2*2/3, 7^4/3, 2^-4/3, 3^-4/3}.
 ///
 constexpr void prime_factorize(std::vector<prime_factor> &out, ratio base,
                                ratio exponent) {
+  base.normalize_sign();
+  if (base.num < 0) {
+    // Push a factor of -1, then factorize the positive value instead.
+    out.push_back(prime_factor{-1, exponent});
+    base.num = -base.num;
+  }
   prime_factorize_whole_number(out, base.num, exponent);
   prime_factorize_whole_number(out, base.den, -exponent);
 }

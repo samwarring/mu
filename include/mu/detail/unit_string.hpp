@@ -4,7 +4,7 @@
 #include <mu/detail/ratio.hpp>
 #include <mu/format_options.hpp>
 #include <string>
-#include <string_view>
+#include <vector>
 
 namespace mu::detail {
 

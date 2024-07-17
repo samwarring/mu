@@ -99,10 +99,30 @@ struct ratio {
   /// Simplify this ratio by dividing its numerator and denominator by their
   /// greatest common divisor.
   constexpr void simplify() {
-    if (den != 1) {
+    normalize_sign();
+    if (num == 0) {
+      den = 1;
+    } else if (den != 1) {
       std::intmax_t d = gcd(num < 0 ? -num : num, den);
       num /= d;
       den /= d;
+    }
+  }
+
+  /// Normalize the +/- signs on the numerator and denominator.
+  ///
+  /// If this ratio is a positive number, then this method ensures the numerator
+  /// and denominator are both positive numbers.
+  ///
+  /// If this ratio is a negative number, then this method ensures that only
+  /// the nuemrator is negative, and the denominator is positive.
+  ///
+  constexpr void normalize_sign() {
+    if (den < 0) {
+      // Could be +num/-den. Or could be -num/-den. Either way, we need to
+      // multiply both num and den by -1.
+      num = -num;
+      den = -den;
     }
   }
 };
