@@ -46,6 +46,14 @@ concept factor = requires {
   // If the factor is not dimensional, and its base magnitude is not
   // representable by a ratio, this is the base's irrational value.
   { factor_traits<T>::irrational_value } -> std::convertible_to<long double>;
+
+  // A factor cannot have a rational scale of 0 (even if it is an irrational
+  // or dimensional factor).
+  requires !ratio(factor_traits<T>::rational_value).is_zero();
+
+  // A factor cannot have an irrational scale of 0 (even if it is a rational or
+  // dimensional factor).
+  requires factor_traits<T>::irrational_value != 0.0l;
 };
 
 } // namespace mu::detail
