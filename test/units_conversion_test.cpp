@@ -107,3 +107,19 @@ CONSTEXPR_TEST(MuConversion, NegativeLargeRationalScale) {
       std::is_same_v<units_conversion_t<nillion_apples, apples>, std::int32_t>);
   static_assert(units_conversion_v<nillion_apples, apples> == -1'000'000);
 }
+
+CONSTEXPR_TEST(MuConversion, PerUnits) {
+  static_assert(units_equivalent_to<mu::per<apples>, mu::pow<apples, -1>>);
+  static_assert(units_equivalent_to<mu::per<apples, 2>, mu::pow<apples, -2>>);
+}
+
+CONSTEXPR_TEST(MuConversion, RootUnits) {
+  static_assert(units_equivalent_to<mu::root<apples>, mu::pow<apples, 1, 2>>);
+  static_assert(
+      units_equivalent_to<mu::root<apples, 3>, mu::pow<apples, 1, 3>>);
+}
+
+CONSTEXPR_TEST(MuConversion, PerRootUnits) {
+  static_assert(
+      units_equivalent_to<mu::per<mu::root<apples>>, mu::pow<apples, -1, 2>>);
+}

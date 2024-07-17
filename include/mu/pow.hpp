@@ -17,6 +17,32 @@ template <units Base, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
 requires(ExpDen != 0)
 struct pow {};
 
+/// The `per` template represents units on the denominator, optionally raised to
+/// an exponent.
+///
+/// Examples:
+///   - `mu::per<meters>` represents `m⁻¹`
+///   - `mu::per<seconds, 2>` represents `sec⁻²`
+///
+/// \tparam Base The units on the denominator of an expression.
+/// \tparam PerExponent The optional exponent on the base units. A value of `N`
+/// represents the units are raised to a power of `-N`.
+///
+template <units Base, std::intmax_t PerExponent = 1>
+using per = pow<Base, -PerExponent, 1>;
+
+/// The `root` template represents an nth-root applied to a unit expression.
+///
+/// Examples:
+///   - `mu::root<meters>` represents `√meters`, or `meters¹ᐟ²`
+///   - `mu::root<meters, 3>` represents '³√meters` or `meters¹ᐟ³`
+///
+/// \tparam Base The unit expression.
+/// \tparam NthRoot The denominator of the exponent of `1/N`. Default is `2`.
+///
+template <units Base, std::intmax_t NthRoot = 2>
+using root = pow<Base, 1, NthRoot>;
+
 namespace detail {
 
 /// If the base of a `pow` matches the factor concept, then the resulting `pow`
