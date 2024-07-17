@@ -88,3 +88,22 @@ CONSTEXPR_TEST(MuConversion, NegativeIrrationalScale) {
   static_assert(units_convertible_to<cbrt_apples, cbrt_funky_apples>);
   static_assert(units_conversion_v<cbrt_apples, cbrt_funky_apples> < 0);
 }
+
+CONSTEXPR_TEST(MuConversion, NegativeLargeRationalScale) {
+  using nillion = std::ratio<-1'000'000>;
+  using nillion_apples = mu::mult<nillion, apples>;
+
+  // Convert apples to -1000000 apples.
+  static_assert(units_convertible_to<apples, nillion_apples>);
+  static_assert(
+      std::is_same_v<units_conversion_t<apples, nillion_apples>, long double>);
+  static_assert(is_equal(units_conversion_v<apples, nillion_apples>, -1e-6l));
+
+  // Convert -1000000 apples to apples.
+  // Conversion value is -1000000. Requres a 32bit int to store (16bits or less
+  // is too small).
+  static_assert(units_convertible_to<nillion_apples, apples>);
+  static_assert(
+      std::is_same_v<units_conversion_t<nillion_apples, apples>, std::int32_t>);
+  static_assert(units_conversion_v<nillion_apples, apples> == -1'000'000);
+}
