@@ -143,3 +143,26 @@ CONSTEXPR_TEST(MuUnits, ContainsPrefix) {
   static_assert(has_format_names<t>(expected_format_names));
   static_assert(has_format_symbols<t>(expected_format_symbols));
 }
+
+CONSTEXPR_TEST(MuUnits, ZeroScales) {
+  struct positive_fp_zero {
+    constexpr static const char *name = "+0.0";
+    constexpr static long double value = +0.0;
+  };
+  struct negative_fp_zero {
+    constexpr static const char *name = "-0.0";
+    constexpr static long double value = -0.0;
+  };
+  using rzero = std::ratio<0>;
+  using positive_fp_zero_apples = mu::mult<positive_fp_zero, apples>;
+  using negative_fp_zero_apples = mu::mult<negative_fp_zero, apples>;
+
+  // While these types are _not_ units, it is still valid code to test them for
+  // satisfying `units`. Constructing this check should NOT trip any
+  // static_assert statements!
+  static_assert(!units<positive_fp_zero>);
+  static_assert(!units<negative_fp_zero>);
+  static_assert(!units<rzero>);
+  static_assert(!units<positive_fp_zero_apples>);
+  static_assert(!units<negative_fp_zero_apples>);
+}
