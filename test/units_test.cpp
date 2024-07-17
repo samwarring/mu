@@ -166,3 +166,10 @@ CONSTEXPR_TEST(MuUnits, ZeroScales) {
   static_assert(!units<positive_fp_zero_apples>);
   static_assert(!units<negative_fp_zero_apples>);
 }
+
+CONSTEXPR_TEST(MuUnits, PowInvalidExponent) {
+// The following (rightly) does not compile:
+#if 0
+  using bad_apples = mu::pow<apples, 1, 0>;
+#endif
+}

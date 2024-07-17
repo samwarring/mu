@@ -14,6 +14,7 @@ namespace mu {
 /// \tparam ExpDen The denominator of the exponent.
 ///
 template <units Base, std::intmax_t ExpNum, std::intmax_t ExpDen = 1>
+requires(ExpDen != 0)
 struct pow {};
 
 namespace detail {
