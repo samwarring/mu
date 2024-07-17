@@ -112,7 +112,7 @@ template <units FromUnits, units ToUnits> struct analysis {
           is_int_convertible = false;
           return;
         }
-        bool abs_exponent_num =
+        std::intmax_t abs_exponent_num =
             f.exponent.num < 0 ? -f.exponent.num : f.exponent.num;
         if (abs_exponent_num % 2 == 1) {
           // -1 raised to an odd exponent is negative.
