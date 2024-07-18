@@ -123,3 +123,18 @@ CONSTEXPR_TEST(MuConversion, PerRootUnits) {
   static_assert(
       units_equivalent_to<mu::per<mu::root<apples>>, mu::pow<apples, -1, 2>>);
 }
+
+CONSTEXPR_TEST(MuConversion, ConvertNpows) {
+  using big = mu::mult<mu::pow2<100>, apples>;
+  using very_big = mu::mult<mu::pow2<105>, apples>;
+
+  // Would be impossible to convert a value measured in 2^100 apples to one
+  // measured in apples. But converting between another value measured in 2^105
+  // apples is no problem. There is only a scale of 2^5.
+
+  static_assert(units_convertible_to<big, very_big>);
+  static_assert(units_convertible_to<very_big, big>);
+
+  static_assert(units_conversion_v<very_big, big> == 32);
+  static_assert(units_conversion_v<big, very_big> == 0.03125l); // 1/32
+}

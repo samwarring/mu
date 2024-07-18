@@ -116,3 +116,15 @@ CONSTEXPR_TEST(MuFactor, BaseUnitSquaredSquared) {
   static_assert(has_exponent<t>(expected_exponent));
   static_assert(has_rational_value<t>(expected_value));
 }
+
+CONSTEXPR_TEST(MuFactor, Npow) {
+  using t = mu::npow<7, 99>;
+  using expected_base = std::ratio<7>;
+  constexpr static ratio expected_exponent = 99;
+  constexpr static ratio expected_value = 7;
+  static_assert(factor<t>);
+  static_assert(has_base<t, expected_base>);
+  static_assert(!is_dimensional<t>);
+  static_assert(has_exponent<t>(expected_exponent));
+  static_assert(has_rational_value<t>(expected_value));
+}
