@@ -31,8 +31,6 @@ struct factor_traits<std::ratio<Num, Den>> {
 ///
 template <std::intmax_t Num, std::intmax_t Den>
 struct unit_traits<std::ratio<Num, Den>> {
-  // static_assert(Num != 0, "Units cannot have a scale of 0");
-
   /// The factors of a ratio include itself.
   using factors = mu::mult<std::ratio<Num, Den>>;
 

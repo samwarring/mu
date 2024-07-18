@@ -173,3 +173,9 @@ CONSTEXPR_TEST(MuUnits, PowInvalidExponent) {
   using bad_apples = mu::pow<apples, 1, 0>;
 #endif
 }
+
+CONSTEXPR_TEST(MuUnits, Npow) {
+  static_assert(units<mu::npow<7, 99>>);
+  static_assert(units<mu::pow10<9>>);
+  static_assert(units<mu::pow2<9>>);
+}

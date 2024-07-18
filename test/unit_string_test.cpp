@@ -109,3 +109,9 @@ TEST_F(MuUnitString, SuperscriptExponent) {
   ustr2.pow(exponent);
   ASSERT_EQ(ustr2.str(), "a⁻¹²³⁴⁵ᐟ⁶⁷⁸⁹⁰");
 }
+
+TEST_F(MuUnitString, Npow) {
+  using u = mu::npow<7, 99>;
+  mu::detail::unit_traits<u>::format(ustr);
+  ASSERT_EQ(ustr.str(), "7^99");
+}
