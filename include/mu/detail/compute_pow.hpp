@@ -10,8 +10,8 @@ namespace mu::detail {
 /// Returns true if the value represents positive or negative infinity.
 constexpr bool is_infinity(long double value) {
   static_assert(std::numeric_limits<long double>::has_infinity);
-  const long double INFINITY = std::numeric_limits<long double>::infinity();
-  return value == INFINITY || value == -INFINITY;
+  long double infinity = std::numeric_limits<long double>::infinity();
+  return value == infinity || value == -infinity;
 }
 
 /// Safely multiply two integers while checking for signed integer overflow.
