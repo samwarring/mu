@@ -1,22 +1,85 @@
 #ifndef INCLUDED_MU_DETAIL_COMPUTE_POW_HPP
 #define INCLUDED_MU_DETAIL_COMPUTE_POW_HPP
 #include <cstdint>
+#include <limits>
 #include <mu/detail/ratio.hpp>
+#include <optional>
 
 namespace mu::detail {
 
-/// Computes xⁿ, where n is a positive whole number.
+/// Returns true if the value represents positive or negative infinity.
+constexpr bool is_infinity(long double value) {
+  static_assert(std::numeric_limits<long double>::has_infinity);
+  const long double INFINITY = std::numeric_limits<long double>::infinity();
+  return value == INFINITY || value == -INFINITY;
+}
+
+/// Safely multiply two integers while checking for signed integer overflow.
 ///
-/// \param base In practice, this is a positive prime number.
-/// \param exponent A positive whole number.
+/// The input integers must both be nonzero, but either or both may be negative.
 ///
-template <class T>
-constexpr T compute_whole_pow(T base, std::intmax_t exponent) {
-  T ret = 1;
-  for (std::intmax_t i = 0; i < exponent; i++) {
-    ret *= base;
+/// \return nullopt if the multiplication would result in an overflow. In this
+/// case, the multiplication is not performed which prevents undefined behavior.
+///
+constexpr std::optional<std::intmax_t> safe_mult(std::intmax_t a,
+                                                 std::intmax_t b) {
+  const std::intmax_t MAX = std::numeric_limits<std::intmax_t>::max();
+  const std::intmax_t MIN = std::numeric_limits<std::intmax_t>::min();
+
+  // Enforce that a >= b. This implies:
+  //   1. If a < 0, then b < 0.
+  //   2. If b > 0, then a > 0.
+  if (a < b) {
+    std::swap(a, b);
   }
-  return ret;
+  if (b < 0) {
+    if ((a > 0) && (b < MIN / a)) {
+      return std::nullopt;
+    } else if (b == MIN) {
+      if (a == 1) {
+        return MIN;
+      }
+      return std::nullopt;
+    } else if (a < 0 && (-b > MAX / -a)) {
+      return std::nullopt;
+    }
+  } else if ((MAX / a) < b) {
+    return std::nullopt;
+  }
+
+  return a * b;
+}
+
+/// Compute integer base raised to an integer power.
+///
+/// \return nullopt if performing the multiplication would cause a signed
+/// integer overflow.
+///
+constexpr std::optional<std::intmax_t>
+compute_whole_pow_int(std::intmax_t base, std::intmax_t exponent) {
+  std::intmax_t result = 1;
+  for (std::intmax_t i = 0; i < exponent; ++i) {
+    if (auto checked = safe_mult(result, base)) {
+      result = *checked;
+    } else {
+      return std::nullopt;
+    }
+  }
+  return result;
+}
+
+/// Compute floating point base raised to an integer power.
+///
+/// \param exponent Must be non-negative.
+/// \return result may be positive or negative infinity.
+///
+constexpr long double compute_whole_pow_float(long double base,
+                                              std::intmax_t exponent) {
+  long double result = 1.0l;
+  for (std::intmax_t i = 0; i < exponent; ++i) {
+    result *= base;
+  }
+  return result;
 }
 
 /// Computes the nth root, ⁿ√x, where n is a positive integer.
@@ -59,7 +122,7 @@ constexpr long double compute_nth_root(long double base, std::intmax_t n) {
   while (guess != next_guess && prev_guess != next_guess) {
     prev_guess = guess;
     guess = next_guess;
-    long double guess_pow_n_1 = compute_whole_pow(guess, n - 1);
+    long double guess_pow_n_1 = compute_whole_pow_float(guess, n - 1);
     long double guess_pow_n = guess_pow_n_1 * guess;
     next_guess = guess - ((guess_pow_n - base) / (n_f * guess_pow_n_1));
   }
@@ -76,25 +139,24 @@ constexpr long double compute_nth_root(long double base, std::intmax_t n) {
 /// \param base The base of the exponent. May be positive or negative.
 /// \param exponent The rational exponent value. The exponent is allowed to be
 /// positive or negative, but the denominator must not be 0.
-/// \return A pair of values: (1) A `bool` that is true if the result is valid;
-/// (2) A `long double` containing the result if it is valid, or an unspecified
-/// value if it is invalid.
+/// \return nullopt if the expression is undefined (either dividing by 0, or
+/// taking an even root of a negative number).
 ///
-constexpr std::pair<bool, long double> compute_rational_pow(long double base,
-                                                            ratio exponent) {
+constexpr std::optional<long double> compute_rational_pow(long double base,
+                                                          ratio exponent) {
 
   // Handle exponent == 0.
   if (exponent.is_zero()) {
-    return {true, 1};
+    return 1.0;
   }
 
   // Handle negative exponents.
   if (exponent.is_negative()) {
-    auto [real, inverse] = compute_rational_pow(base, -exponent);
-    if (!real || inverse == 0) {
-      return {false, 0};
+    auto inverse = compute_rational_pow(base, -exponent);
+    if (!inverse || *inverse == 0) {
+      return std::nullopt;
     }
-    return {true, 1.0 / inverse};
+    return 1.0 / *inverse;
   }
 
   // Exponent is positive, but make sure num and den are positive numbers.
@@ -112,20 +174,20 @@ constexpr std::pair<bool, long double> compute_rational_pow(long double base,
   if (base < 0 && exponent_fraction.den % 2 == 0) {
     // Attempting an even root of a negative number. Answer is an imaginary
     // number, which is not supported!
-    return {false, 0};
+    return std::nullopt;
   }
 
   // Compute the whole exponent portion.
-  long double result_whole = compute_whole_pow(base, exponent_whole);
+  long double result_whole = compute_whole_pow_float(base, exponent_whole);
 
   // Compute the fractional exponent portion.
   long double result_fractional = compute_nth_root(base, exponent_fraction.den);
   result_fractional =
-      compute_whole_pow(result_fractional, exponent_fraction.num);
+      compute_whole_pow_float(result_fractional, exponent_fraction.num);
 
   // Final result!
   long double result = result_whole * result_fractional;
-  return {true, result};
+  return result;
 }
 
 } // namespace mu::detail

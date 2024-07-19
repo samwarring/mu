@@ -71,24 +71,15 @@ template <units FromUnits, units ToUnits> struct analysis {
         // Found a combined *dimensional* factor with a non-zero exponent.
         // FromUnits and ToUnits have different dimensions, and are not
         // convertible.
-        is_convertible = false;
-        is_equivalent = false;
-        is_int_convertible = false;
+        set_not_convertible();
         return;
       }
       if (!f.is_rational_value) {
         // Found a combined *irrational* factor with a non-zero exponent. This
         // guarantees that FromUnits cannot be converted to ToUnits without
         // multiplying by some floating point conversion value.
-        auto [valid, result] =
-            compute_rational_pow(f.irrational_value, f.exponent);
-        if (valid) {
-          float_conversion *= result;
-        } else {
-          // Rational power is undefined.
-          is_convertible = false;
-          is_equivalent = false;
-          is_int_convertible = false;
+        if (!scale_by_float(f.irrational_value, f.exponent)) {
+          set_not_convertible();
           return;
         }
       } else {
@@ -102,37 +93,21 @@ template <units FromUnits, units ToUnits> struct analysis {
     combine_prime_factors(prime_factors);
     for (auto &f : prime_factors) {
       if (f.base == -1) {
-        // The conversion included a factor whose base is a negative ratio.
-        // Ultimately, conversion could be positive, negative, or undefined.
-        f.exponent.simplify();
-        if (f.exponent.den % 2 == 0) {
-          // Even root of a negative number is undefined.
-          is_convertible = false;
-          is_equivalent = false;
-          is_int_convertible = false;
+        // The conversion includes a negative factor.
+        if (!scale_by_negative_1(f.exponent)) {
+          set_not_convertible();
           return;
-        }
-        std::intmax_t abs_exponent_num =
-            f.exponent.num < 0 ? -f.exponent.num : f.exponent.num;
-        if (abs_exponent_num % 2 == 1) {
-          // -1 raised to an odd exponent is negative.
-          int_conversion *= -1;
         }
       } else if (!f.exponent.is_negative() && f.exponent.is_whole()) {
         // This factor only requires int conversion.
-        int_conversion *=
-            compute_whole_pow(f.base, f.exponent.num / f.exponent.den);
+        if (!scale_by_int(f.base, f.exponent.num / f.exponent.den)) {
+          set_not_convertible();
+          return;
+        }
       } else {
         // This factor requires float conversion.
-        auto [valid, result] =
-            compute_rational_pow(static_cast<long double>(f.base), f.exponent);
-        if (valid) {
-          float_conversion *= result;
-        } else {
-          // Rational power is undefined.
-          is_convertible = false;
-          is_equivalent = false;
-          is_int_convertible = false;
+        if (!scale_by_float(f.base, f.exponent)) {
+          set_not_convertible();
           return;
         }
       }
@@ -143,12 +118,20 @@ template <units FromUnits, units ToUnits> struct analysis {
       is_equivalent = false;
       is_int_convertible = false;
       float_conversion *= int_conversion;
-    } else if (int_conversion != 1) {
+      if (is_infinity(float_conversion)) {
+        set_not_convertible();
+      }
+      return;
+    }
+    if (int_conversion != 1) {
       is_equivalent = false;
     }
   }
 
 private:
+  /// Multiply the exponent of \p src into \p dst. If \p dst has an unkown
+  /// base_id, then copy \p src into \p dst.
+  ///
   constexpr static void combine_factors(concrete_factor &dst,
                                         const concrete_factor &src) {
     if (dst.base_id == src.base_id) {
@@ -161,6 +144,65 @@ private:
       dst.rational_value = src.rational_value;
       dst.irrational_value = src.irrational_value;
     }
+  }
+
+  /// Puts this object in the "not convertible" state.
+  constexpr void set_not_convertible() {
+    is_convertible = false;
+    is_equivalent = false;
+    is_int_convertible = false;
+    return;
+  }
+
+  /// Scale the integer conversion by an integer raised to an integer power
+  ///
+  /// \return false if the exponentiation or scaling would result in integer
+  /// overflow.
+  ///
+  constexpr bool scale_by_int(std::intmax_t value, std::intmax_t exponent) {
+    if (auto checked_pow = compute_whole_pow_int(value, exponent)) {
+      if (auto checked_mult = safe_mult(int_conversion, *checked_pow)) {
+        int_conversion = *checked_mult;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Scale the float conversion by a float raised to a rational exponent.
+  ///
+  /// \return false if the scaling is undefined (divide by 0, or even root of
+  /// negative number).
+  ///
+  constexpr bool scale_by_float(long double value, ratio exponent) {
+    if (auto checked_pow = compute_rational_pow(value, exponent)) {
+      float_conversion *= *checked_pow;
+      if (!is_infinity(float_conversion)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /// Scale the integer conversion by -1 raised to a rational power.
+  ///
+  /// We only scale by -1 if the exponent is odd.
+  ///
+  /// \return false if the expression is undefined (even root of -1).
+  ///
+  constexpr bool scale_by_negative_1(ratio exponent) {
+    exponent.simplify();
+    if (exponent.den % 2 == 0) {
+      // Even root of negative number is undefined.
+      return false;
+    }
+    std::intmax_t abs_exponent_num =
+        exponent.num < 0 ? -exponent.num : exponent.num;
+    if (abs_exponent_num % 2 == 1) {
+      // -1 raised to an odd exponent is negative.
+      int_conversion = -int_conversion;
+    }
+    return true;
   }
 };
 
