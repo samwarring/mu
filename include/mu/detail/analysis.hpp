@@ -106,7 +106,7 @@ template <units FromUnits, units ToUnits> struct analysis {
         }
       } else {
         // This factor requires float conversion.
-        if (!scale_by_float(f.base, f.exponent)) {
+        if (!scale_by_float(static_cast<long double>(f.base), f.exponent)) {
           set_not_convertible();
           return;
         }
