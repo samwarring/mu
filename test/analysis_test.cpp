@@ -120,3 +120,43 @@ TEST(MuAnalysis, NegativeIntegerScale) {
     ASSERT_EQ(a.float_conversion, (long double)-0.5);
   }
 }
+
+TEST(MuAnalysis, IntegerPowOverflow) {
+  using from = mu::mult<mu::pow2<200>, apples>;
+  using to = apples;
+  analysis<from, to> a;
+  ASSERT_FALSE(a.is_convertible);
+}
+
+TEST(MuAnalysis, IntegerMultOverflow) {
+  using from = mu::mult<mu::pow10<6>, mu::pow10<6>, mu::pow10<6>, mu::pow10<6>,
+                        mu::pow10<6>, mu::pow10<6>, mu::pow10<6>, apples>;
+  using to = apples;
+  analysis<from, to> a;
+  ASSERT_FALSE(a.is_convertible);
+}
+
+TEST(MuAnalysis, SquareRootOfNegative1) {
+  using from = mu::root<std::ratio<-1>>;
+  using to = std::ratio<1>;
+  analysis<from, to> a;
+  ASSERT_FALSE(a.is_convertible);
+}
+
+TEST(MuAnalysis, FloatPowOverflow) {
+  using from = mu::mult<mu::pow<golden, 1'000'000>, apples>;
+  using to = apples;
+  analysis<from, to> a;
+  ASSERT_FALSE(a.is_convertible);
+}
+
+TEST(MuAnalysis, FloatMultOverflow) {
+  using from = mu::mult<
+      mu::pow<golden, 10'000>, mu::pow<golden, 10'000>, mu::pow<golden, 10'000>,
+      mu::pow<golden, 10'000>, mu::pow<golden, 10'000>, mu::pow<golden, 10'000>,
+      mu::pow<golden, 10'000>, mu::pow<golden, 10'000>, mu::pow<golden, 10'000>,
+      mu::pow<golden, 10'000>, mu::pow<golden, 10'000>, apples>;
+  using to = apples;
+  analysis<from, to> a;
+  ASSERT_FALSE(a.is_convertible);
+}

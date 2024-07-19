@@ -63,8 +63,8 @@
             "name": "gcov",
             "hidden": true,
             "environment": {
-                "MY_C_FLAGS_COVERAGE": "--coverage",
-                "MY_CXX_FLAGS_COVERAGE": "--coverage"
+                "MY_C_FLAGS_COVERAGE": "-O0 --coverage",
+                "MY_CXX_FLAGS_COVERAGE": "-O0 --coverage"
             }
         },
         {
