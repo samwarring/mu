@@ -1,0 +1,5 @@
+<map id="mu::detail::factor_traits&lt; std::ratio&lt; Num, Den &gt; &gt;" name="mu::detail::factor_traits&lt; std::ratio&lt; Num, Den &gt; &gt;">
+<area shape="rect" id="Node000001" title="std::ratio can be a factor of a unit expression." alt="" coords="5,108,141,163"/>
+<area shape="rect" id="Node000002" href="$structmu_1_1detail_1_1ratio.html" title="A constexpr&#45;friendly ratio." alt="" coords="10,5,137,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="76,45,76,108,71,108,71,45"/>
+</map>

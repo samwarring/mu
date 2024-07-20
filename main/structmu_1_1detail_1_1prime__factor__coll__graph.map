@@ -1,0 +1,5 @@
+<map id="mu::detail::prime_factor" name="mu::detail::prime_factor">
+<area shape="rect" id="Node000001" title="Represents a factor from the prime&#45;factorization of an integer." alt="" coords="5,93,184,119"/>
+<area shape="rect" id="Node000002" href="$structmu_1_1detail_1_1ratio.html" title="A constexpr&#45;friendly ratio." alt="" coords="31,5,158,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="97,45,97,93,92,93,92,45"/>
+</map>
