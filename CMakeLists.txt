@@ -12,6 +12,7 @@ target_compile_features(mu INTERFACE cxx_std_20)
 if(mu_ENABLE_TEST)
   enable_testing()
   add_subdirectory(test)
+  add_subdirectory(example)
 endif()
 
 add_subdirectory(pkg)
