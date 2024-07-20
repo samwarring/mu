@@ -1,0 +1,7 @@
+parse:
+  additional_commands:
+    scrape_code_blocks:
+      kwargs:
+        INPUT_FILE: 1
+        OUTPUT_FILE_PREFIX: 1
+        OUTPUT_FILE_LIST: 1

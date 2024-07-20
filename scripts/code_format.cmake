@@ -32,8 +32,8 @@ endforeach()
 message("---------------------------------------------------------------------")
 message("cmake-format path: ${CMAKE_FORMAT}")
 execute_process(COMMAND "${CMAKE_FORMAT}" --version COMMAND_ERROR_IS_FATAL ANY)
-file(GLOB_RECURSE CMAKE_FILES "${PROJECT_DIR}/*/CMakeLists.txt"
-     "${PROJECT_DIR}/*.cmake")
+file(GLOB_RECURSE CMAKE_FILES "${PROJECT_DIR}/CMakeLists.txt"
+     "${PROJECT_DIR}/**/CMakeLists.txt" "${PROJECT_DIR}/*.cmake")
 list(FILTER CMAKE_FILES EXCLUDE REGEX vcpkg/|build/)
 list(LENGTH CMAKE_FILES CMAKE_FILES_LENGTH)
 message("Formatting ${CMAKE_FILES_LENGTH} files...")

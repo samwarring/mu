@@ -20,7 +20,7 @@ units.
 Example:
 ```cpp
 #include <mu/mu.hpp>
-#include <iostream>
+#include <sstream>
 
 int main() {
     // Calculate speed in km/h.
@@ -29,14 +29,20 @@ int main() {
     auto speed_kmph = distance / time;
 
     // Converts km/h to m/s.
-    mu::quantity<float, mu::meter_per_second> speed_mps = speed_kmph;
+    mu::quantity<double, mu::meter_per_second> speed_mps = speed_kmph;
 
-    // Print both quantities: 20 km • hr⁻¹ = 27.7778 m • s⁻¹
-    std::cout << mu::stream::symbols
-              << mu::stream::superscript_exponents
-              << mu::stream::mult_sep(" • ")
-              << speed_kmph << " = "
-              << speed_mps << '\n';
+    // Print both quantities.
+    std::ostringstream sout;
+    sout << mu::stream::symbols
+         << mu::stream::superscript_exponents
+         << mu::stream::mult_sep(" • ")
+         << speed_kmph << " = "
+         << speed_mps;
+
+    // Check expected string.
+    std::string actual = sout.str();
+    std::string expected = "20 km • hr⁻¹ = 5.55556 m • s⁻¹";
+    return actual != expected;
 }
 ```
 
@@ -44,7 +50,7 @@ int main() {
 
 This library is a hobby project (and I learned a lot while making it)! I
 currently do not recommend using this library in production, because there
-already exist other mature libraries for the same purpose. You may consider
+already exist other mature libraries for the same purpose. You might consider
 using:
 
   1. [mpusz/mp-units](https://github.com/mpusz/mp-units)
