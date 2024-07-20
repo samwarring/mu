@@ -1,0 +1,11 @@
+name: On Push to Main
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy_docs:
+    name: Build and Deploy Documentation
+    uses: ./.github/workflows/docs.yml
+    with:
+      docs_tag: main
