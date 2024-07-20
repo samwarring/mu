@@ -1,0 +1,33 @@
+<map id="include/mu/detail/symbols.hpp" name="include/mu/detail/symbols.hpp">
+<area shape="rect" id="Node000001" title="This file contains core concepts needed to define base units and base constants, as well as composite..." alt="" coords="53,5,275,31"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,79,85,104"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="146,33,78,74,75,69,144,28"/>
+<area shape="rect" id="Node000003" href="$factor_8hpp_source.html" title=" " alt="" coords="161,152,314,177"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="172,30,228,138,223,141,168,32"/>
+<area shape="rect" id="Node000004" href="$ratio_8hpp_source.html" title=" " alt="" coords="99,225,245,251"/>
+<area shape="poly" id="edge6_Node000001_Node000004" title=" " alt="" coords="163,31,150,94,147,135,151,177,163,212,158,214,145,178,142,135,145,93,158,30"/>
+<area shape="rect" id="Node000007" href="$units_8hpp_source.html" title=" " alt="" coords="429,79,536,104"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="216,28,419,73,417,78,215,33"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="229,179,194,217,190,213,225,176"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="337,299,404,324"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="205,248,326,291,324,296,203,253"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="142,299,202,324"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="175,251,175,285,169,285,169,251"/>
+<area shape="poly" id="edge8_Node000007_Node000003" title=" " alt="" coords="444,107,291,151,289,146,443,101"/>
+<area shape="rect" id="Node000008" href="$unit__string_8hpp_source.html" title=" " alt="" coords="390,152,575,177"/>
+<area shape="poly" id="edge9_Node000007_Node000008" title=" " alt="" coords="485,104,485,138,480,138,480,104"/>
+<area shape="rect" id="Node000009" href="$format__options_8hpp_source.html" title=" " alt="" coords="270,225,445,251"/>
+<area shape="poly" id="edge15_Node000007_Node000009" title=" " alt="" coords="448,106,412,125,394,138,380,154,366,182,361,212,355,211,361,181,375,150,391,134,409,121,446,102"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="693,225,752,251"/>
+<area shape="poly" id="edge16_Node000007_Node000010" title=" " alt="" coords="537,93,604,98,678,109,743,126,768,137,785,150,791,169,785,187,771,204,754,219,750,215,767,201,780,185,786,169,780,154,765,141,741,131,677,114,603,104,536,98"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="599,152,654,177"/>
+<area shape="poly" id="edge17_Node000007_Node000012" title=" " alt="" coords="507,102,592,143,590,148,505,106"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="678,152,770,177"/>
+<area shape="poly" id="edge18_Node000007_Node000013" title=" " alt="" coords="522,101,672,145,671,151,521,107"/>
+<area shape="poly" id="edge11_Node000008_Node000004" title=" " alt="" coords="433,180,236,225,235,220,432,175"/>
+<area shape="poly" id="edge10_Node000008_Node000005" title=" " alt="" coords="484,178,477,213,469,233,458,252,435,276,409,294,406,290,432,272,454,249,464,231,472,211,479,177"/>
+<area shape="poly" id="edge12_Node000008_Node000009" title=" " alt="" coords="464,180,391,221,388,216,461,175"/>
+<area shape="poly" id="edge13_Node000008_Node000010" title=" " alt="" coords="522,175,681,222,679,227,520,180"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="521,225,583,251"/>
+<area shape="poly" id="edge14_Node000008_Node000011" title=" " alt="" coords="496,176,533,214,529,217,492,180"/>
+</map>
