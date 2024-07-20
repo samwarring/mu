@@ -5,7 +5,7 @@
 #include <mu/detail/ratio.hpp>
 #include <mu/units.hpp>
 
-/// \file sybmols.hpp
+/// \file symbols.hpp
 ///
 /// This file contains core concepts needed to define base units and base
 /// constants, as well as composite units and composite constants.
