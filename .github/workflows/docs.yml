@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Create output folder
-        run: mkdir build/docs
+        run: mkdir -p build/docs
 
       - name: Build docs
         uses: DenverCoder1/doxygen-github-pages-action@v1.3.1
