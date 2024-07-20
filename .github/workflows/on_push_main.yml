@@ -10,3 +10,5 @@ jobs:
     with:
       docs_tag: main
       dry_run: false
+    permissions:
+        contents: write
