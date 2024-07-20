@@ -17,5 +17,7 @@
 #include <mu/stream.hpp>
 #include <mu/unit_references.hpp>
 #include <mu/units.hpp>
+#include <mu/units/si_prefixes.hpp>
+#include <mu/units/si_units.hpp>
 #include <mu/units_conversion.hpp>
 #endif
