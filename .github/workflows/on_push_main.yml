@@ -9,3 +9,4 @@ jobs:
     uses: ./.github/workflows/docs.yml
     with:
       docs_tag: main
+      dry_run: false
