@@ -9,6 +9,12 @@ jobs:
   format:
     name: Code Format
     uses: ./.github/workflows/format.yml
+  docs:
+    name: Build Docs
+    uses: ./.github/workflows/docs.yml
+    with:
+      docs_tag: PR${{ github.event.pull_request.number }}
+      dry_run: true
   overall:
     name: Pull Request Overall Status
     if: always()
@@ -16,6 +22,7 @@ jobs:
     needs:
       - build
       - format
+      - docs
     steps:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@release/v1
