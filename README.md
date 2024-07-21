@@ -17,6 +17,8 @@ same, the library determines the correct _scale factor_ at compile-time. Users
 can define their own units, which can be fundamental or composed from existing
 units.
 
+For the complete explanation of features, visit the [User Guide](#userguide).
+
 Example:
 ```cpp
 #include <mu/mu.hpp>

@@ -6,7 +6,7 @@
     <tab type="mainpage" visible="yes" title="Home" />
     <tab type="user" visible="yes" title="GitHub" url="https://github.com/samwarring/mu" />
     <tab type="pages" visible="no" title="" intro="" />
-    <tab type="usergroup" visible="yes" title="User Guide" url="[none]">
+    <tab type="usergroup" visible="yes" title="User Guide" url="@ref userguide">
       <tab type="user" visible="yes" title="Working with Quantities" url="@ref userguide_quantities" />
       <tab type="user" visible="yes" title="Defining Custom Unit Types" url="@ref userguide_units" />
       <tab type="user" visible="yes" title="Defining Custom Rep Types" url="@ref userguide_rep" />
