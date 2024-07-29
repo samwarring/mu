@@ -56,7 +56,7 @@ public:
 /// Examples of convertible units:
 ///  1. units_convertible_to<meters, feet>
 ///  2. units_convertible_to<meters_per_second, miles_per_hour>
-///  3. units_convertible_to<newton_meters, joule_minutes>
+///  3. units_convertible_to<newton_meters, watt_minutes>
 ///
 /// Examples of units that are NOT convertible:
 ///  1. units_convertible_to<meters, seconds>
